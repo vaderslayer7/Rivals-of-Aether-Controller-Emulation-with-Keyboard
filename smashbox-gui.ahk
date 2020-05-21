@@ -22,12 +22,16 @@ hotkeyLabels.Insert("C-stick Down")
 hotkeyLabels.Insert("C-stick Left")
 hotkeyLabels.Insert("C-stick Right")
 hotkeyLabels.Insert("Start")
+hotkeyLabels.Insert("D-pad Up")
+hotkeyLabels.Insert("D-pad Down")
+hotkeyLabels.Insert("D-pad Left")
+hotkeyLabels.Insert("D-pad Right")
 
 Menu, Tray, Click, 1
 Menu, Tray, Add, Edit Controls, ShowGui
 Menu, Tray, Default, Edit Controls
 
-#ctrls = 18  ;Total number of Key's we will be binding (excluding UP's)?
+#ctrls = 22  ;Total number of Key's we will be binding (excluding UP's)?
 
 for index, element in hotkeyLabels{
  Gui, Add, Text, xm vLB%index%, %element% Hotkey:
@@ -677,6 +681,43 @@ Label18:
 Label18_UP:
   myStick.SetBtn(0, 12)
   return
+
+; D Up
+Label19:
+  myStick.SetBtn(1, 13)
+  return
+
+Label19_UP:
+  myStick.SetBtn(0, 13)
+  return
+
+; D Down
+Label20:
+  myStick.SetBtn(1, 14)
+  return
+
+Label20_UP:
+  myStick.SetBtn(0, 14)
+  return
+
+; D Left
+Label21:
+  myStick.SetBtn(1, 15)
+  return
+
+Label21_UP:
+  myStick.SetBtn(0, 15)
+  return
+
+; D Right
+Label22:
+  myStick.SetBtn(1, 16)
+  return
+
+Label22_UP:
+  myStick.SetBtn(0, 16)
+  return
+
 
 clearC() {
   buttonCUp := false
