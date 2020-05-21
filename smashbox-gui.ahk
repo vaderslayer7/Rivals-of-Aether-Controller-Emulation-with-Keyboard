@@ -104,7 +104,7 @@ coordsQuadrant := [0.7, 0.7]
 coordsQuadrantModX := [0.7375, 0.2875]
 coordsQuadrantModY := [0.2875, 0.7375]
 
-coordsRButtonVertical := [0.5375, 0] ; TODO - find out how/if ModX and ModY affect cardinal directions
+coordsRButtonVertical := [0, 0.5375] ; TODO - find out how/if ModX and ModY affect cardinal directions
 coordsRButtonHorizontal := [0.6375, 0]
 coordsRButtonQuadrant := [0.5375, 0.5375]
 coordsRButtonQuadrant12ModX := coordsQuadrantModX ; TODO - find actual values for R+modifier upward angles
@@ -125,6 +125,7 @@ coordsLZButtonQuadrant34ModY := coordsRButtonQuadrant34ModY
 ; TODO - add SDI nerf
 ; TODO - add pivot utilt nerf
 
+displayedDebug := false ; FIXME
 
 ; Updates the position on the analog stick based on the current held buttons
 updateStick() {
@@ -164,6 +165,19 @@ updateStick() {
 
   reflectedCoords := reflectCoords(coords, vert, horiz)
 
+  ; FIXME
+  debugString := Format(debugFormatString
+    , reflectedCoords
+    , vert
+    , horiz
+    , modif
+    , buttonUp, buttonDown, buttonLeft, buttonRight, buttonModX, buttonModY
+    , buttonL, buttonR, buttonZ, buttonB)
+  if (displayedDebug == false) {
+    ;displayedDebug := true
+    ;Msgbox % debugString
+  }
+
   setStick(reflectedCoords)
 }
 
@@ -180,6 +194,7 @@ reflectCoords(coords, vert, horiz) {
 }
 
 getCoordsWithR(vert, horiz, modif) {
+  global
   if (neither(vert, horiz)) {
     return coordsOrigin
   } else if (vert and horiz) {
@@ -207,6 +222,7 @@ getCoordsWithR(vert, horiz, modif) {
 }
 
 getCoordsWithLZ(vert, horiz, modif) {
+  global
   if (neither(vert, horiz)) {
     return coordsOrigin
   } else if (vert and horiz) {
@@ -238,6 +254,7 @@ getCoordsWithLZ(vert, horiz, modif) {
 }
 
 getCoordsWithNoShield(vert, horiz, modif) {
+  global
   if (neither(vert, horiz)) {
     return coordsOrigin
   } else if (vert and horiz) {
@@ -277,16 +294,35 @@ getCoordsWithNoShield(vert, horiz, modif) {
 setStick(coords) {
   global
   myStick.SetAxisByIndex(convertToVJoy(coords[1]), 1)
-  myStick.SetAxisByIndex(-convertToVJoy(coords[2]), 2)
+  myStick.SetAxisByIndex(convertToVJoy(coords[2]), 2)
+  if (displayedDebug == false) {
+    ;displayedDebug := true
+    ;Msgbox % Format("Set stick to [{1}, {2}] ([{3}, {4}])", coords[1], coords[2], convertToVJoy(coords[1]), -convertToVJoy(coords[2]))
+  }
 }
 
 convertToVJoy(coord) {
+  global
+  if (not displayedDebug) {
+    ;displayedDebug := true
+    ;Msgbox % Format("Converting melee coordingate {1} to vJoy. Percent: {2}, vJoy: {3}", coord, (50 * (coord + 1)), vJoyInterface.PercentTovJoy(50 * (coord + 1)))
+  }
   return vJoyInterface.PercentTovJoy(50 * (coord + 1))
 }
 
 neither(a, b) {
   return (not a) and (not b)
 }
+
+debugFormatString = 
+(
+  melee coords: {1}
+  vert: {2}
+  horiz: {3}
+  modif: {4}
+  direction buttons: (u/d/l/r/mx/my): {5}/{6}/{7}/{8}/{9}/{10}
+  action buttons (L/R/Z/B): {11}/{12}/{13}/{14}
+)
 
 validateHK(GuiControl) {
  global lastHK
@@ -454,23 +490,23 @@ Label4_UP:
 
 ; ModX
 Label5:
-  bottonModX := true
+  buttonModX := true
   updateStick()
   return
 
 Label5_UP:
-  bottonModX := false
+  buttonModX := false
   updateStick()
   return
 
 ; ModY
 Label6:
-  bottonModY := true
+  buttonModY := true
   updateStick()
   return
 
 Label6_UP:
-  bottonModY := false
+  buttonModY := false
   updateStick()
   return
 
