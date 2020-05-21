@@ -5,37 +5,29 @@ SetBatchLines, -1
 
 hotkeyLabels := Object()
 hotkeyLabels.Insert("Analog Up")
-hotkeyLabels.Insert("Analog Left")
 hotkeyLabels.Insert("Analog Down")
+hotkeyLabels.Insert("Analog Left")
 hotkeyLabels.Insert("Analog Right")
-hotkeyLabels.Insert("X1")
-hotkeyLabels.Insert("X2")
-hotkeyLabels.Insert("Y1")
-hotkeyLabels.Insert("Y2")
-hotkeyLabels.Insert("L")
-hotkeyLabels.Insert("Y")
-hotkeyLabels.Insert("R")
-hotkeyLabels.Insert("Lightshield")
-hotkeyLabels.Insert("B")
+hotkeyLabels.Insert("ModX")
+hotkeyLabels.Insert("ModY")
 hotkeyLabels.Insert("A")
+hotkeyLabels.Insert("B")
+hotkeyLabels.Insert("L")
+hotkeyLabels.Insert("R")
 hotkeyLabels.Insert("X")
+hotkeyLabels.Insert("Y")
 hotkeyLabels.Insert("Z")
 hotkeyLabels.Insert("C-stick Up")
-hotkeyLabels.Insert("C-stick Left")
 hotkeyLabels.Insert("C-stick Down")
+hotkeyLabels.Insert("C-stick Left")
 hotkeyLabels.Insert("C-stick Right")
 hotkeyLabels.Insert("Start")
-hotkeyLabels.Insert("D-pad Up")
-hotkeyLabels.Insert("D-pad Left")
-hotkeyLabels.Insert("D-pad Down")
-hotkeyLabels.Insert("D-pad Right")
 
 Menu, Tray, Click, 1
-;Menu, Tray, NoStandard
 Menu, Tray, Add, Edit Controls, ShowGui
 Menu, Tray, Default, Edit Controls
 
-#ctrls = 25  ;Total number of Key's we will be binding (excluding UP's)?
+#ctrls = 18  ;Total number of Key's we will be binding (excluding UP's)?
 
 for index, element in hotkeyLabels{
  Gui, Add, Text, xm vLB%index%, %element% Hotkey:
@@ -74,159 +66,228 @@ if (!vJoyInterface.vJoyEnabled()){
 
 myStick := vJoyInterface.Devices[1]
 
-;Alert User that script has started
+; Alert User that script has started
 TrayTip, Smashbox, Script Started, 3, 0
 
-; Stick variables
-l := false
-r := false
-u := false
-d := false
+; state variables
+buttonUp := false
+buttonDown := false
+buttonLeft := false
+buttonRight := false
 
-x1 := 0
-x2 := 0
-y1 := 0
-y2 := 0
+buttonB := false
+buttonZ := false
 
-/* PM
-v1x := 9088
-v2x := 5120
-v3x := 3712
+buttonL := false
+buttonR := false
 
-v1y := 15000
-v2y := 5120
-v3y := 3712
+buttonModX := false
+buttonModY := false
 
-v1yhigh := 9216
-v2yhigh := 5248
-v3yhigh := 3712
+buttonCUp := false
+buttonCDown := false
+buttonCLeft := false
+buttonCRight := false
 
-xlowstart := 3456
-xhighstart := 29376
+mostRecentVertical := ""
+mostRecentHorizontal := ""
 
-ylowstart := 3328
-yhighstart := 29312
-*/
+; b0xx constants
+coordsOrigin := [0, 0]
+coordsVertical := [0, 1]
+coordsVerticalModX := [0, 0.2875]
+coordsVerticalModY := [0, 0.7375]
+coordsHorizontal := [1, 0]
+coordsHorizontalModX := [0.6625, 0]
+coordsHorizontalModY := [0.3375, 0]
+coordsQuadrant := [0.7, 0.7]
+coordsQuadrantModX := [0.7375, 0.2875]
+coordsQuadrantModY := [0.2875, 0.7375]
 
-/*
-; Melee
-l0 := 8000
-l1 := 13800
-l2 := 11000
-l3 := 9300
+coordsRButtonVertical := [0.5375, 0] ; TODO - find out how/if ModX and ModY affect cardinal directions
+coordsRButtonHorizontal := [0.6375, 0]
+coordsRButtonQuadrant := [0.5375, 0.5375]
+coordsRButtonQuadrant12ModX := coordsQuadrantModX ; TODO - find actual values for R+modifier upward angles
+coordsRButtonQuadrant12ModY := coordsQuadrantModY
+coordsRButtonQuadrant34ModX := [0.6375, 0.375]
+coordsRButtonQuadrant34ModY := [0.5, 0.85]
 
-r0 := 25150
-r1 := 19150
-r2 := 22000
-r3 := 23800
+coordsLZButtonVertical := coordsVertical
+coordsLZButtonHorizontal := coordsHorizontal
+coordsLZButtonQuadrant12 := coordsRButtonQuadrant12
+coordsLZButtonQuadrant12ModX := coordsQuadrantModX
+coordsLZButtonQuadrant12ModY := coordsQuadrantModY
+coordsLZButtonQuadrant34 := [0.7125, 0.6875]
+coordsLZButtonQuadrant34ModX := coordsRButtonQuadrant34ModX
+coordsLZButtonQuadrant34ModY := coordsRButtonQuadrant34ModY
 
-u0 := 7900
-u1 := 13800
-u2 := 11230
-u3 := 9200
-
-d0 := 25300
-d1 := 19200
-d2 := 21820
-d3 := 24000
-*/
-
-; alt Melee
-l0 := 5400  ;42
-l1 := 12900 ;101
-l2 := 9300  ;73
-l3 := 7000  ;55
-
-r0 := 27600 ;215
-r1 := 19900 ;155
-r2 := 23500 ;183
-r3 := 25800 ;201
-
-u0 := 5300  ;214
-u1 := 12900 ;154
-u2 := 9600  ;180
-u3 := 6900  ;201
-
-d0 := 27600 ;40
-d1 := 19900 ;100
-d2 := 23200 ;74
-d3 := 25900 ;53
-
-; Gives stick input based on stick variables
+; TODO - add firefox angles
+; TODO - add SDI nerf
+; TODO - add pivot utilt nerf
 
 
-stickx() {
+; Updates the position on the analog stick based on the current held buttons
+updateStick() {
   global
-  if ((l and r) or ((not l) and (not r))) {
-    myStick.SetAxisByIndex(vJoyInterface.PercentTovJoy(50),1)
-  } 
-  else if (l) {
-    if (x1 and x2) {
-      myStick.SetAxisByIndex(l3,1)
-    }
-    else if (x1) {
-      myStick.SetAxisByIndex(l1,1)
-    }
-    else if (x2) {
-      myStick.SetAxisByIndex(l2,1)
-    }
-    else {
-      myStick.SetAxisByIndex(l0,1)
-    }
+
+  if (buttonUp and (mostRecentVertical == "U")) {
+    vert := "U"
+  } else if (buttonDown and (mostRecentVertical == "D") {
+    vert := "D"
+  } else {
+    vert := ""
   }
-  else {
-    if (x1 and x2) {
-      myStick.SetAxisByIndex(r3,1)
-    }
-    else if (x1) {
-      myStick.SetAxisByIndex(r1,1)
-    }
-    else if (x2) {
-      myStick.SetAxisByIndex(r2,1)
-    }
-    else {
-      myStick.SetAxisByIndex(r0,1)
-    }
+
+  if (buttonLeft and (mostRecentHorizontal == "L")) {
+    horiz := "L"
+  } else if (buttonRight and (mostRecentHorizontal == "R") {
+    horiz := "R"
+  } else {
+    horiz := ""
   }
-  return
+
+  if (nether(buttonModX, buttonModY)
+      or (buttonModX and buttonModY)
+      or (buttonLeft and buttonRight)) {
+    modif := ""
+  } else if (buttonModX) {
+    modif := "X"
+  } else {
+    modif := "Y"
+  }
+
+  if (buttonR) {
+    coords := getCoordsWithR(vert, horiz, modif)
+  } else if (buttonL or buttonZ) {
+    coords := getCoordsWithLZ(vert, horiz, modif)
+  } else {
+    coords := getCoordsWithNoShield(vert, horiz, modif)
+  }
+
+  reflectedCoords = reflectCoords(coords, vert, horiz)
+
+  setStick(reflectedCoords)
 }
 
+reflectCoords(coords, vert, horiz) {
+  x := coords[1]
+  y := coords[2]
+  if (vert == "U") {
+    y := -y
+  }
+  if (horiz == "L") {
+    x := -x
+  }
+  return [x, y]
+}
 
+getCoordsWithR(vert, horiz, modif) {
+  if (neither(vert, horiz)) {
+    return coordsOrigin
+  } else if (vert and horiz) {
+    switch modif {
+      case "X":
+        if (vert == "U") {
+          return coordsRButtonQuadrant12ModX
+        } else {
+          return coordsRButtonQuadrant34ModX
+        }
+      case "Y":
+        if (vert == "U") {
+          return coordsRButtonQuadrant12ModY
+        } else {
+          return coordsRButtonQuadrant34ModY
+        }
+      default:
+        return coordsRButtonQuadrant
+    }
+  } else if (vert) {
+    return coordsRButtonVertical
+  } else {
+    return coordsRButtonHorizontal
+  }
+}
 
-sticky() {
+getCoordsWithLZ(vert, horiz, modif) {
+  if (neither(vert, horiz)) {
+    return coordsOrigin
+  } else if (vert and horiz) {
+    switch modif {
+      case "X":
+        if (vert == "U") {
+          return coordsLZButtonQuadrant12ModX
+        } else {
+          return coordsLZButtonQuadrant34ModX
+        }
+      case "Y":
+        if (vert == "U") {
+          return coordsLZButtonQuadrant12ModY
+        } else {
+          return coordsLZButtonQuadrant34ModY
+        }
+      default:
+        if (vert == "U") {
+          return coordsLZButtonQuadrant12
+        } else {
+          return coordsLZButtonQuadrant34
+        }
+    }
+  } else if (vert) {
+    return coordsLZButtonVertical
+  } else {
+    return coordsLZButtonHorizontal
+  }
+}
+
+getCoordsWithNoShield(vert, horiz, modif) {
+  if (neither(vert, horiz)) {
+    return coordsOrigin
+  } else if (vert and horiz)
+    switch modif {
+      case "X":
+        return coordsQuadrantModX
+      case "Y":
+        return coordsQuadrantModY
+      default:
+        return coordsQuadrant
+    }
+  } else if (vert) {
+    switch modif {
+      case "X":
+        return coordsVerticalModX
+      case "Y":
+        return coordsVerticalModY
+      default:
+        return coordsVertical
+    }
+  } else {
+    switch modif {
+      case "X":
+        return coordsHorizontalModX
+      case "Y":
+        if (buttonB) { ; turnaround side-b nerf
+          return coordsHorizontal
+        } else {
+          return coordsHorizontalModY
+        }
+      default:
+        return coordsHorizontal
+    }
+  }
+}
+
+setStick(coords) {
   global
-  if ((u and d) or ((not u) and (not d))) {
-    myStick.SetAxisByIndex(vJoyInterface.PercentTovJoy(50),2)
-  } 
-  else if (u) {
-    if (y1 and y2) {
-      myStick.SetAxisByIndex(u3,2) 
-    }
-    else if (y1) {
-      myStick.SetAxisByIndex(u1,2) 
-    }
-    else if (y2) {
-      myStick.SetAxisByIndex(u2,2) 
-    }
-    else {
-      myStick.SetAxisByIndex(u0,2) 
-    }
-  }
-  else {
-    if (y1 and y2) {
-      myStick.SetAxisByIndex(d3,2) ;53
-    }
-    else if (y1) {
-      myStick.SetAxisByIndex(d1,2) ;100
-    }
-    else if (y2) {
-      myStick.SetAxisByIndex(d2,2) ;74
-    }
-    else {
-      myStick.SetAxisByIndex(d0,2) ;40 ;25250
-    }
-  }
-  return
+  myStick.SetAxisByIndex(convertToVJoy(coords[1], 1)
+  myStick.SetAxisByIndex(-convertToVJoy(coords[2], 2)
+}
+
+convertToVJoy(coord) {
+  return vJoyInterface.PercentTovJoy(50 * (coord + 1))
+}
+
+neither(a, b) {
+  return (not a) and (not b)
 }
 
 validateHK(GuiControl) {
@@ -336,13 +397,6 @@ Pause::Suspend
 SetKeyDelay, 0
 #MaxHotkeysPerInterval 200
 
-
-;a::
-; ListVars
-
-;; KEYS
-; m,.k op[] 90-\
-
 ^!s::
   Suspend
     If A_IsSuspended
@@ -351,227 +405,264 @@ SetKeyDelay, 0
         TrayTip, Smashbox, Hotkeys Enabled, 3, 0
   Return
 
-Label9:
-  myStick.SetBtn(1,1)
-  Return
 
-Label9_UP:
-  myStick.SetBtn(0,1)
-  Return
-
-Label10:
-  myStick.SetBtn(1,2)
-  Return
-
-Label10_UP:
-  myStick.SetBtn(0,2)
-  Return
-
-Label11:
-  myStick.SetBtn(1,3)
-  Return
-
-Label11_UP:
-  myStick.SetBtn(0,3)
-  Return
-
-Label13:
-  myStick.SetBtn(1,5)
-  Return
-
-Label13_UP:
-  myStick.SetBtn(0,5)
-  Return
-
-Label14:
-  myStick.SetBtn(1,6)
-  Return
-
-Label14_UP:
-  myStick.SetBtn(0,6)
-  Return
-
-Label15:
-  myStick.SetBtn(1,7)
-  Return
-
-Label15_UP:
-  myStick.SetBtn(0,7)
-  Return
-
-Label16:
-  myStick.SetBtn(1,8)
-  Return
-
-Label16_UP:
-  myStick.SetBtn(0,8)
-  Return
-
-Label18:
-  myStick.SetBtn(1,9)
-  Return
-
-Label18_UP:
-  myStick.SetBtn(0,9)
-  Return
-
-Label19:
-  myStick.SetBtn(1,10)
-  Return
-
-Label19_UP:
-  myStick.SetBtn(0,10)
-  Return
-
-Label20:
-  myStick.SetBtn(1,11)
-  Return
-;comma
-Label20_UP:
-  myStick.SetBtn(0,11)
-  Return
-
-Label17:
-  myStick.SetBtn(1,12)
-  Return
-
-Label17_UP:
-  myStick.SetBtn(0,12)
-  Return
-
-Label21:
-  myStick.SetBtn(1,4)
-  Return
-
-Label21_UP:
-  myStick.SetBtn(0,4)
-  Return
-
-Label22:
-  myStick.SetBtn(1,13)
-  Return
-
-Label22_UP:
-  myStick.SetBtn(0,13)
-  Return
-
-Label23:
-  myStick.SetBtn(1,14)
-  Return
-
-Label23_UP:
-  myStick.SetBtn(0,14)
-  Return
-
-Label24:
-  myStick.SetBtn(1,15)
-  Return
-
-Label24_UP:
-  myStick.SetBtn(0,15)
-  Return
-
-Label25:
-  myStick.SetBtn(1,16)
-  Return
-
-Label25_UP:
-  myStick.SetBtn(0,16)
-  Return
-
-
-; STICK
-;2qwe dxcv
-
-
-Label4:
-  r := true
-  stickx()
-  return
-
-Label4_UP:
-  r := false
-  stickx()
-  return
-
-Label2:
-  l := true
-  stickx()
-  return
-
-Label2_UP:
-  l := false
-  stickx()
-  return
-
+; Analog Up
 Label1:
-  u := true
-  sticky()
+  buttonUp := true
+  mostRecentVertical := "U"
+  updateStick()
   return
 
 Label1_UP:
-  u := false
-  sticky()
+  buttonUp := false
+  updateStick()
   return
 
+; Analog Down
+Label2:
+  buttonDown := true
+  mostRecentVertical := "D"
+  updateStick()
+  return
+
+Label2_UP:
+  buttonDown := false
+  updateStick()
+  return
+
+; Analog Left
 Label3:
-  d := true
-  sticky()
-  return
-Label3_UP:
-  d := false
-  sticky()
+  buttonLeft := true
+  mostRecentHorizontal := "L"
+  updateStick()
   return
 
+Label3_UP:
+  buttonLeft := false
+  updateStick()
+  return
+
+; Analog Right
+Label4:
+  buttonRight := true
+  mostRecentHorizontal := "R"
+  updateStick()
+  return
+
+Label4_UP:
+  buttonRight := false
+  updateStick()
+  return
+
+; ModX
 Label5:
-  x1 := true
-  stickx()
+  bottonModX := true
+  updateStick()
   return
 
 Label5_UP:
-  x1 := false
-  stickx()
+  bottonModX := false
+  updateStick()
   return
 
+; ModY
 Label6:
-  x2 := true
-  stickx()
+  bottonModY := true
+  updateStick()
   return
 
 Label6_UP:
-  x2 := false
-  stickx()
+  bottonModY := false
+  updateStick()
   return
 
+; A
 Label7:
-  y1 := true
-  sticky()
+  myStick.SetBtn(1,1)
   return
+
 Label7_UP:
-  y1 := false
-  sticky()
+  myStick.SetBtn(0,1)
   return
 
+; B
 Label8:
-  y2 := true
-  sticky()
+  buttonB := true
+  myStick.SetBtn(1, 2)
+  updateStick()
   return
+
 Label8_UP:
-  y2 := false
-  sticky()
+  buttonB := false
+  myStick.SetBtn(0, 2)
+  updateStick()
   return
 
-;; Lightshield
+; L
+Label9:
+  buttonL := true
+  myStick.SetBtn(1, 3)
+  updateStick()
+  return
 
+Label9_UP:
+  buttonL := false
+  myStick.SetBtn(0, 3)
+  updateStick()
+  return
+
+; L
+Label9:
+  buttonL := true
+  myStick.SetBtn(1, 3)
+  updateStick()
+  return
+
+Label9_UP:
+  buttonL := false
+  myStick.SetBtn(0, 3)
+  updateStick()
+  return
+
+; R
+Label10:
+  buttonR := true
+  myStick.SetBtn(1, 4)
+  updateStick()
+  return
+
+Label10_UP:
+  buttonR := false
+  myStick.SetBtn(0, 4)
+  updateStick()
+  return
+
+; X
+Label11:
+  myStick.SetBtn(1, 5)
+  return
+
+Label11_UP:
+  myStick.SetBtn(0, 5)
+  return
+
+; Y
 Label12:
-  myStick.SetAxisByIndex(vJoyInterface.PercentTovJoy(59),3)
-  Return
+  myStick.SetBtn(1, 6)
+  return
 
 Label12_UP:
-  myStick.SetAxisByIndex(vJoyInterface.PercentTovJoy(0),3)
+  myStick.SetBtn(0, 6)
   return
 
-;----------------------------end macros
+; Z
+Label13:
+  buttonZ := true
+  myStick.SetBtn(1, 7)
+  updateStick()
+  return
+
+Label13_UP:
+  buttonZ := false
+  myStick.SetBtn(0, 7)
+  updateStick()
+  return
+
+; C Up
+Label14:
+  clearC()
+  buttonCUp := true
+  if (buttonModX and buttonModY) {
+      ; Pressing ModX and ModY simultaneously changes C buttons to D pad
+      myStick.SetBtn(1, 13)
+  } else {
+      myStick.SetBtn(1, 8)
+  }
+  updateStick()
+  return
+
+Label14_UP:
+  buttonCUp := false
+  myStick.SetBtn(0, 8)
+  myStick.SetBtn(0, 13)
+  updateStick()
+  return
+
+; C Down
+Label15:
+  clearC()
+  buttonCDown := true
+  if (buttonModX and buttonModY) {
+      ; Pressing ModX and ModY simultaneously changes C buttons to D pad
+      myStick.SetBtn(1, 14)
+  } else {
+      myStick.SetBtn(1, 9)
+  }
+  updateStick()
+  return
+
+Label15_UP:
+  buttonCDown := false
+  myStick.SetBtn(0, 9)
+  myStick.SetBtn(0, 14)
+  updateStick()
+  return
+
+; C Left
+Label16:
+  clearC()
+  buttonCLeft := true
+  if (buttonModX and buttonModY) {
+      ; Pressing ModX and ModY simultaneously changes C buttons to D pad
+      myStick.SetBtn(1, 15)
+  } else {
+      myStick.SetBtn(1, 10)
+  }
+  updateStick()
+  return
+
+Label16_UP:
+  buttonCLeft := false
+  myStick.SetBtn(0, 10)
+  myStick.SetBtn(0, 15)
+  updateStick()
+  return
+
+; C Right
+Label17:
+  clearC()
+  buttonCRight := true
+  if (buttonModX and buttonModY) {
+      ; Pressing ModX and ModY simultaneously changes C buttons to D pad
+      myStick.SetBtn(1, 16)
+  } else {
+      myStick.SetBtn(1, 11)
+  }
+  updateStick()
+  return
+
+Label17_UP:
+  buttonCRight := false
+  myStick.SetBtn(0, 11)
+  myStick.SetBtn(0, 16)
+  updateStick()
+  return
+
+; Start
+Label18:
+  myStick.SetBtn(1, 12)
+  return
+
+Label18_UP:
+  myStick.SetBtn(0, 12)
+  return
+
+clearC() {
+  buttonCUp := false
+  buttonCDown := false
+  buttonCLeft := false
+  buttonCRight := false
+}
 
 /*
 TODO:
