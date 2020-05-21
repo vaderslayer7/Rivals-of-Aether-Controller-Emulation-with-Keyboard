@@ -58,7 +58,7 @@ for index, element in hotkeyLabels{
 vJoyInterface := new CvJoyInterface()
 
 ; Was vJoy installed and the DLL Loaded?
-if (!vJoyInterface.vJoyEnabled()){
+if (!vJoyInterface.vJoyEnabled()) {
   ; Show log of what happened
   Msgbox % vJoyInterface.LoadLibraryLog
   ExitApp
@@ -132,7 +132,7 @@ updateStick() {
 
   if (buttonUp and (mostRecentVertical == "U")) {
     vert := "U"
-  } else if (buttonDown and (mostRecentVertical == "D") {
+  } else if (buttonDown and (mostRecentVertical == "D")) {
     vert := "D"
   } else {
     vert := ""
@@ -140,15 +140,13 @@ updateStick() {
 
   if (buttonLeft and (mostRecentHorizontal == "L")) {
     horiz := "L"
-  } else if (buttonRight and (mostRecentHorizontal == "R") {
+  } else if (buttonRight and (mostRecentHorizontal == "R")) {
     horiz := "R"
   } else {
     horiz := ""
   }
 
-  if (nether(buttonModX, buttonModY)
-      or (buttonModX and buttonModY)
-      or (buttonLeft and buttonRight)) {
+  if (neither(buttonModX, buttonModY) or (buttonModX and buttonModY) or (buttonLeft and buttonRight)) {
     modif := ""
   } else if (buttonModX) {
     modif := "X"
@@ -164,7 +162,7 @@ updateStick() {
     coords := getCoordsWithNoShield(vert, horiz, modif)
   }
 
-  reflectedCoords = reflectCoords(coords, vert, horiz)
+  reflectedCoords := reflectCoords(coords, vert, horiz)
 
   setStick(reflectedCoords)
 }
@@ -242,7 +240,7 @@ getCoordsWithLZ(vert, horiz, modif) {
 getCoordsWithNoShield(vert, horiz, modif) {
   if (neither(vert, horiz)) {
     return coordsOrigin
-  } else if (vert and horiz)
+  } else if (vert and horiz) {
     switch modif {
       case "X":
         return coordsQuadrantModX
@@ -278,8 +276,8 @@ getCoordsWithNoShield(vert, horiz, modif) {
 
 setStick(coords) {
   global
-  myStick.SetAxisByIndex(convertToVJoy(coords[1], 1)
-  myStick.SetAxisByIndex(-convertToVJoy(coords[2], 2)
+  myStick.SetAxisByIndex(convertToVJoy(coords[1]), 1)
+  myStick.SetAxisByIndex(-convertToVJoy(coords[2]), 2)
 }
 
 convertToVJoy(coord) {
@@ -495,19 +493,6 @@ Label8:
 Label8_UP:
   buttonB := false
   myStick.SetBtn(0, 2)
-  updateStick()
-  return
-
-; L
-Label9:
-  buttonL := true
-  myStick.SetBtn(1, 3)
-  updateStick()
-  return
-
-Label9_UP:
-  buttonL := false
-  myStick.SetBtn(0, 3)
   updateStick()
   return
 
