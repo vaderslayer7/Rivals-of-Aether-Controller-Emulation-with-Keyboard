@@ -114,7 +114,7 @@ coordsRButtonQuadrant34ModY := [0.5, 0.85]
 
 coordsLZButtonVertical := coordsVertical
 coordsLZButtonHorizontal := coordsHorizontal
-coordsLZButtonQuadrant12 := coordsRButtonQuadrant12
+coordsLZButtonQuadrant12 := coordsRButtonQuadrant
 coordsLZButtonQuadrant12ModX := coordsQuadrantModX
 coordsLZButtonQuadrant12ModY := coordsQuadrantModY
 coordsLZButtonQuadrant34 := [0.7125, 0.6875]
