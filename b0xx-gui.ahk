@@ -39,9 +39,9 @@ for index, element in hotkeyLabels{
  If savedHK%index%                                       ;Check for saved hotkeys in INI file.
   Hotkey,% savedHK%index%, Label%index%                 ;Activate saved hotkeys if found.
   Hotkey,% savedHK%index% . " UP", Label%index%_UP                 ;Activate saved hotkeys if found.
-  ;TrayTip, Smashbox, Label%index%_UP, 3, 0
-  ;TrayTip, Smashbox, % savedHK%A_Index%, 3, 0
-  ;TrayTip, Smashbox, % savedHK%index% . " UP", 3, 0
+  ;TrayTip, B0XX, Label%index%_UP, 3, 0
+  ;TrayTip, B0XX, % savedHK%A_Index%, 3, 0
+  ;TrayTip, B0XX, % savedHK%index% . " UP", 3, 0
  checked := false
  if(!InStr(savedHK%index%, "~", false)){
   checked := true
@@ -71,7 +71,7 @@ if (!vJoyInterface.vJoyEnabled()) {
 myStick := vJoyInterface.Devices[1]
 
 ; Alert User that script has started
-TrayTip, Smashbox, Script Started, 3, 0
+TrayTip, B0XX, Script Started, 3, 0
 
 ; state variables
 buttonUp := false
@@ -295,23 +295,25 @@ getCoordsWithNoShield(vert, horiz, modif) {
   }
 }
 
+verticalFudgeFactor = 0.01
 setStick(coords) {
   global
   myStick.SetAxisByIndex(convertToVJoy(coords[1]), 1)
-  myStick.SetAxisByIndex(convertToVJoy(coords[2]), 2)
+  myStick.SetAxisByIndex(convertToVJoy(coords[2] + verticalFudgeFactor), 2)
   if (displayedDebug == false) {
     ;displayedDebug := true
     ;Msgbox % Format("Set stick to [{1}, {2}] ([{3}, {4}])", coords[1], coords[2], convertToVJoy(coords[1]), -convertToVJoy(coords[2]))
   }
 }
 
+scaleFactor := 0.63
 convertToVJoy(coord) {
   global
   if (not displayedDebug) {
     ;displayedDebug := true
     ;Msgbox % Format("Converting melee coordingate {1} to vJoy. Percent: {2}, vJoy: {3}", coord, (50 * (coord + 1)), vJoyInterface.PercentTovJoy(50 * (coord + 1)))
   }
-  return vJoyInterface.PercentTovJoy(50 * (coord + 1))
+  return vJoyInterface.PercentTovJoy(50 * (scaleFactor * coord + 1))
 }
 
 neither(a, b) {
@@ -351,7 +353,7 @@ checkDuplicateHK(num) {
  Loop,% #ctrls
   If (HK%num% = savedHK%A_Index%) {
    dup := A_Index
-   TrayTip, Smashbox, Hotkey Already Taken, 3, 0
+   TrayTip, B0XX, Hotkey Already Taken, 3, 0
    Loop,6 {
     GuiControl,% "Disable" b:=!b, HK%dup%   ;Flash the original hotkey to alert the user.
     Sleep,200
@@ -438,9 +440,9 @@ SetKeyDelay, 0
 ^!s::
   Suspend
     If A_IsSuspended
-        TrayTip, Smashbox, Hotkeys Disabled, 3, 0
+        TrayTip, B0XX, Hotkeys Disabled, 3, 0
     Else
-        TrayTip, Smashbox, Hotkeys Enabled, 3, 0
+        TrayTip, B0XX, Hotkeys Enabled, 3, 0
   Return
 
 

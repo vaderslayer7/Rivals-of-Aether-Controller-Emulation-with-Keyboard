@@ -1,12 +1,10 @@
-# smashbox-AHK
+# B0XX-AHK
 
-This is an autohotkey script that lets you set up your keyboard to act like the smashbox in dolphin. Since dolphin does not let you bind keys to specific joystick values, I wrote this script.
+This is an autohotkey script that lets you set up your keyboard to act like the B0XX in dolphin. It is adapted from a similar script originally written by tlandegger for the Smashbox.
 
 The script works by using autohotkey to read the keyboard inputs, then converts them into a virtual joystick called vjoy. Vjoy is then used to control the inputs in dolphin.
 
-Personally I am in favor of legalizing the smashbox for competitive play. Hopefully this script can show people what the smashbox can and can't do.
-
-I have no relation with Hitbox, I do like their products though and plan on buying the Smashbox. 
+I have no relationship with the creators of the B0XX. 
 
 # Requirments
 1. Windows. Autohotkey only works on windows. This script was tested on widows 10.
@@ -18,9 +16,9 @@ I have no relation with Hitbox, I do like their products though and plan on buyi
 7. (Optional- for development) AHK-CvJoyInterface: a library for linking Autohotkey and Vjoy. Download CvJoyInterface.ahk from https://github.com/evilC/AHK-CvJoyInterface Place CvJoyInterface.ahk inside the Lib folder where you installed autohotkey (for me C:\Program Files\AutoHotkey\Lib) You may have to make the Lib folder if it is not already there. 
 
 # Setup
-1. Place the smashbox.ini file inside your dolphin-folder-name\User\Config\Profiles\GCPad folder. 
-2. In dolphin, open up controller config. Set player 1 to a standard controller, then hit configure. Under profile, select smashbox and hit load. After, Set device to vjoy. Then hit ok.
-3. Run smashbox.exe. Make sure the Hotkeys.ini file is in the same dirrectory.
+1. Place the b0xx-keyboard.ini file inside your dolphin-folder-name\User\Config\Profiles\GCPad folder. 
+2. In dolphin, open up controller config. Set player 1 to a standard controller, then hit configure. Under profile, select b0xx and hit load. After, Set device to vjoy. Then hit ok.
+3. Run b0xx.exe. Make sure the Hotkeys.ini file is in the same dirrectory.
 4. If you want to pause the script, hit the pause key. If you want to exit the script, open up hidden icons, right click the green H and hit exit.
 6. To change the controls, go to the task bar in the bottom right and either double click the green "A" icon, or right click and press "Show GUI".
 7. Changes are automatically saved to Hotkeys.ini in the same directory and reflected in realtime.
@@ -74,4 +72,4 @@ side + x1 + b : neutral b in held direction
 
 # Development info
 
-The smashbox.exe is a compiled version of the smashbox-gui.ahk file with the vjoy autohotkey library in as well. If you want to make changes to the script, edit the smashbox-gui.ahk file. 
+The b0xx.exe is a compiled version of the b0xx-gui.ahk file with the vjoy autohotkey library in as well. If you want to make changes to the script, edit the b0xx-gui.ahk file. 
