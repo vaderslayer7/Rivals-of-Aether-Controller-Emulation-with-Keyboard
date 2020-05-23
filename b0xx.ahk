@@ -35,7 +35,7 @@ Menu, Tray, Default, Edit Controls
 
 for index, element in hotkeyLabels{
  Gui, Add, Text, xm vLB%index%, %element% Hotkey:
- IniRead, savedHK%index%, Hotkeys.ini, Hotkeys, %index%, %A_Space%
+ IniRead, savedHK%index%, hotkeys.ini, Hotkeys, %index%, %A_Space%
  If savedHK%index%                                       ;Check for saved hotkeys in INI file.
   Hotkey,% savedHK%index%, Label%index%                 ;Activate saved hotkeys if found.
   Hotkey,% savedHK%index% . " UP", Label%index%_UP                 ;Activate saved hotkeys if found.
@@ -372,7 +372,7 @@ setHK(num,INI,GUI) {
   Hotkey, %GUI%, Label%num%, On   ;  enable it.
   Hotkey, %GUI% UP, Label%num%_UP, On   ;  enable it.
 }
- IniWrite,% GUI ? GUI:null, Hotkeys.ini, Hotkeys, %num%
+ IniWrite,% GUI ? GUI:null, hotkeys.ini, Hotkeys, %num%
  savedHK%num%  := HK%num%
  ;TrayTip, Label%num%,% !INI ? GUI " ON":!GUI ? INI " OFF":GUI " ON`n" INI " OFF"
 }

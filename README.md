@@ -72,4 +72,4 @@ side + x1 + b : neutral b in held direction
 
 # Development info
 
-The b0xx.exe is a compiled version of the b0xx-gui.ahk file with the vjoy autohotkey library in as well. If you want to make changes to the script, edit the b0xx-gui.ahk file. 
+b0xx.exe is a compiled version of the b0xx.ahk file with the vjoy autohotkey library in as well. If you want to make changes to the script, edit the b0xx.ahk file. 
