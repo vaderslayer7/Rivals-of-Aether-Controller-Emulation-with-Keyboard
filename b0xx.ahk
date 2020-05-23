@@ -3,37 +3,34 @@
 #include <CvJoyInterface>
 SetBatchLines, -1
 
-hotkeyLabels := Object()
-hotkeyLabels.Insert("Analog Up")
-hotkeyLabels.Insert("Analog Down")
-hotkeyLabels.Insert("Analog Left")
-hotkeyLabels.Insert("Analog Right")
-hotkeyLabels.Insert("ModX")
-hotkeyLabels.Insert("ModY")
-hotkeyLabels.Insert("A")
-hotkeyLabels.Insert("B")
-hotkeyLabels.Insert("L")
-hotkeyLabels.Insert("R")
-hotkeyLabels.Insert("X")
-hotkeyLabels.Insert("Y")
-hotkeyLabels.Insert("Z")
-hotkeyLabels.Insert("C-stick Up")
-hotkeyLabels.Insert("C-stick Down")
-hotkeyLabels.Insert("C-stick Left")
-hotkeyLabels.Insert("C-stick Right")
-hotkeyLabels.Insert("Start")
-hotkeyLabels.Insert("D-pad Up")
-hotkeyLabels.Insert("D-pad Down")
-hotkeyLabels.Insert("D-pad Left")
-hotkeyLabels.Insert("D-pad Right")
+hotkeys := [ "Analog Up"
+           , "Analog Down"
+           , "Analog Left"
+           , "Analog Right"
+           , "ModX"
+           , "ModY"
+           , "A"
+           , "B"
+           , "L"
+           , "R"
+           , "X"
+           , "Y"
+           , "Z"
+           , "C-stick Up"
+           , "C-stick Down"
+           , "C-stick Left"
+           , "C-stick Right"
+           , "Start"
+           , "D-pad Up"
+           , "D-pad Down"
+           , "D-pad Left"
+           , "D-pad Right"]
 
 Menu, Tray, Click, 1
 Menu, Tray, Add, Edit Controls, ShowGui
 Menu, Tray, Default, Edit Controls
 
-#ctrls = 22  ;Total number of Key's we will be binding (excluding UP's)?
-
-for index, element in hotkeyLabels{
+for index, element in hotkeys{
  Gui, Add, Text, xm vLB%index%, %element% Hotkey:
  IniRead, savedHK%index%, hotkeys.ini, Hotkeys, %index%, %A_Space%
  If savedHK%index%                                       ;Check for saved hotkeys in INI file.
@@ -48,13 +45,65 @@ for index, element in hotkeyLabels{
  }
  StringReplace, noMods, savedHK%index%, ~                  ;Remove tilde (~) and Win (#) modifiers...
  StringReplace, noMods, noMods, #,,UseErrorLevel              ;They are incompatible with hotkey controls (cannot be shown).
- Gui, Add, Hotkey, x+5 vHK%index% gGuiLabel, %noMods%        ;Add hotkey controls and show saved hotkeys.
+ Gui, Add, Hotkey, x+5 w50 vHK%index% gGuiLabel, %noMods%        ;Add hotkey controls and show saved hotkeys.
  if(!checked)
   Gui, Add, CheckBox, x+5 vCB%index% gGuiLabel, Prevent Default Behavior  ;Add checkboxes to allow the Windows key (#) as a modifier..
  else
   Gui, Add, CheckBox, x+5 vCB%index% Checked gGuiLabel, Prevent Default Behavior  ;Add checkboxes to allow the Windows key (#) as a modifier..
 }                                                               ;Check the box if Win modifier is used.
 
+; --------------------------- configurable parameters
+
+; This godawful formatting is because autohotkey requires new lines to start with a comma
+parameters := [ { "description": "Vertical Offset"
+                , "id": "verticalOffset" }
+              , { "description": "Horizontal Offset"
+                , "id": "horizontalOffset" }
+              , { "description": "Vertical Scale Factor"
+                , "id": "verticalScaleFactor" }
+              , { "description": "Horizontal Scale Factor"
+                , "id": "horizontalScaleFactor" } ]
+
+SetFormat, Float, 0.4
+Gui, Add, Text, ym h0 Section,
+for index, element in parameters {
+  description := element.description
+  id := element.id
+
+  IniRead, %id%, parameters.ini, Parameters, %id%
+
+  Gui, Add, Text, xs, %description%:
+  Gui, Add, Edit, x+5 r1 w43 Limit6 v%id% ghandleSetParameter, % %id%
+}
+
+handleSetParameter() {
+  global parameters
+
+  Gui, Submit, NoHide
+
+  parameterId := getGuiEventControlId()
+  parameterValue := getGuiEventValue()
+
+  Msgbox, in handleSetParameter()! paramId: %parameterId%, paramValue: %parameterValue%
+  
+  IniWrite, %parameterValue%, parameters.ini, Parameters, %parameterId%
+}
+
+; Encapsulate these one liners as functions because otherwise it's extremely
+; non-obvious what 'A_GuiControl' and '%A_GuiControl' do
+
+; Returns a string containing the name of the global variable associated with the
+; GuiControl that spawned the current thread
+getGuiEventControlId() {
+  return A_GuiControl
+}
+
+; Returns the value of the global variable associated with the GuiControl that
+; spawned the current thread
+getGuiEventValue() {
+  id := %A_GuiControl%
+  return %id% 
+}
 
 ;----------Start Hotkey Handling-----------
 
@@ -134,7 +183,6 @@ displayedDebug := false ; FIXME
 ; Updates the position on the analog stick based on the current held buttons
 updateStick() {
   global
-
   if (buttonUp and (mostRecentVertical == "U")) {
     vert := "U"
   } else if (buttonDown and (mostRecentVertical == "D")) {
@@ -204,17 +252,9 @@ getCoordsWithR(vert, horiz, modif) {
   } else if (vert and horiz) {
     switch modif {
       case "X":
-        if (vert == "U") {
-          return coordsRButtonQuadrant12ModX
-        } else {
-          return coordsRButtonQuadrant34ModX
-        }
+        return vert == "U" ? coordsRButtonQuadrant12ModX : coordsRButtonQuadrant34ModX
       case "Y":
-        if (vert == "U") {
-          return coordsRButtonQuadrant12ModY
-        } else {
-          return coordsRButtonQuadrant34ModY
-        }
+        return vert == "U" ? coordsRButtonQuadrant12ModY : coordsRButtonQuadrant34ModY
       default:
         return coordsRButtonQuadrant
     }
@@ -232,23 +272,11 @@ getCoordsWithLZ(vert, horiz, modif) {
   } else if (vert and horiz) {
     switch modif {
       case "X":
-        if (vert == "U") {
-          return coordsLZButtonQuadrant12ModX
-        } else {
-          return coordsLZButtonQuadrant34ModX
-        }
+        return vert == "U" ? coordsLZButtonQuadrant12ModX : coordsLZButtonQuadrant34ModX
       case "Y":
-        if (vert == "U") {
-          return coordsLZButtonQuadrant12ModY
-        } else {
-          return coordsLZButtonQuadrant34ModY
-        }
+        return vert == "U" ? coordsLZButtonQuadrant12ModY : coordsLZButtonQuadrant34ModY
       default:
-        if (vert == "U") {
-          return coordsLZButtonQuadrant12
-        } else {
-          return coordsLZButtonQuadrant34
-        }
+        return vert == "U" ? coordsLZButtonQuadrant12 : coordsLZButtonQuadrant34
     }
   } else if (vert) {
     return coordsLZButtonVertical
@@ -284,36 +312,32 @@ getCoordsWithNoShield(vert, horiz, modif) {
       case "X":
         return coordsHorizontalModX
       case "Y":
-        if (buttonB) { ; turnaround side-b nerf
-          return coordsHorizontal
-        } else {
-          return coordsHorizontalModY
-        }
+        return buttonB ? coordsHorizontal : coordsHorizontalModY ; turnaround side-b nerf
       default:
         return coordsHorizontal
     }
   }
 }
 
-verticalFudgeFactor = 0.01
 setStick(coords) {
   global
-  myStick.SetAxisByIndex(convertToVJoy(coords[1]), 1)
-  myStick.SetAxisByIndex(convertToVJoy(coords[2] + verticalFudgeFactor), 2)
+  adjustedX := horizontalScaleFactor * (coords[1] + horizontalOffset)
+  adjustedY := verticalScaleFactor * (coords[2] + verticalOffset)
+  myStick.SetAxisByIndex(convertToVJoy(adjustedX), 1)
+  myStick.SetAxisByIndex(convertToVJoy(adjustedY), 2)
   if (displayedDebug == false) {
     ;displayedDebug := true
     ;Msgbox % Format("Set stick to [{1}, {2}] ([{3}, {4}])", coords[1], coords[2], convertToVJoy(coords[1]), -convertToVJoy(coords[2]))
   }
 }
 
-scaleFactor := 0.63
 convertToVJoy(coord) {
   global
   if (not displayedDebug) {
     ;displayedDebug := true
     ;Msgbox % Format("Converting melee coordingate {1} to vJoy. Percent: {2}, vJoy: {3}", coord, (50 * (coord + 1)), vJoyInterface.PercentTovJoy(50 * (coord + 1)))
   }
-  return vJoyInterface.PercentTovJoy(50 * (scaleFactor * coord + 1))
+  return vJoyInterface.PercentTovJoy(50 * (coord + 1))
 }
 
 neither(a, b) {
@@ -349,8 +373,8 @@ validateHK(GuiControl) {
 }
 
 checkDuplicateHK(num) {
- global #ctrls
- Loop,% #ctrls
+ global
+ Loop,% hotkeys.Length()
   If (HK%num% = savedHK%A_Index%) {
    dup := A_Index
    TrayTip, B0XX, Hotkey Already Taken, 3, 0
@@ -728,9 +752,3 @@ clearC() {
   buttonCRight := false
 }
 
-/*
-TODO:
-make suspend, refresh, and quit all be user-assignable hotkeys
-make it so there is a way users can choose to disable certain keys (that they're not using in macros, but don't want to be in the way like DF said)
-make a master button or checkbox that will check all / uncheck all of the checkboxes
-*/
