@@ -6,9 +6,10 @@ The script uses Autohotkey to read keyboard inputs and convert them to inputs to
 
 The B0XX functionality provided is *incomplete*. Missing behavior includes:
 
-* Firefox angles other than 0-21-45-69-90°
+* Extended Firefox angles for Mewtwo/Pikachu/Pichu/Sheik/Zelda upb
 * SDI nerf
 * Pivot utilt/angled ftilt nerf
+* Angled fsmash
 * B0XX r2 lightshield buttons
 
 I am unaffiliated with the creators/producers of the B0XX. 

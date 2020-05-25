@@ -174,6 +174,16 @@ coordsLZButtonQuadrant34 := [0.7125, 0.6875]
 coordsLZButtonQuadrant34ModX := coordsRButtonQuadrant34ModX
 coordsLZButtonQuadrant34ModY := coordsRButtonQuadrant34ModY
 
+coordsFirefoxModXCUp := [0.6625, 0.4625]
+coordsFirefoxModXCDown := [0.775, 0.375]
+coordsFirefoxModXCLeft := [0.7875, 0.4625]
+coordsFirefoxModXCRight := [0.6375, 0.525]
+
+coordsFirefoxModYCUp := [0.55, 0.7875]
+coordsFirefoxModYCDown := [0.3875, 0.8]
+coordsFirefoxModYCLeft := [0.4625, 0.7875]
+coordsFirefoxModYCRight := [0.5875, 0.7125]
+
 ; TODO - add firefox angles
 ; TODO - add SDI nerf
 ; TODO - add pivot utilt nerf
@@ -290,13 +300,17 @@ getCoordsWithNoShield(vert, horiz, modif) {
   if (neither(vert, horiz)) {
     return coordsOrigin
   } else if (vert and horiz) {
-    switch modif {
-      case "X":
-        return coordsQuadrantModX
-      case "Y":
-        return coordsQuadrantModY
-      default:
-        return coordsQuadrant
+    if (anyC() and modif == "X" or modif == "Y") {
+      return getCoordsFirefox(vert, horiz, modif)
+    } else {
+      switch modif {
+        case "X":
+          return coordsQuadrantModX
+        case "Y":
+          return coordsQuadrantModY
+        default:
+          return coordsQuadrant
+      }
     }
   } else if (vert) {
     switch modif {
@@ -319,6 +333,32 @@ getCoordsWithNoShield(vert, horiz, modif) {
   }
 }
 
+getCoordsFirefox(vert, horiz, modif) {
+  global
+  if (modif == "X") {
+    if (buttonCUp) { ; code doesn't allow multiple c button variables to be true at once
+      return coordsFirefoxModXCUp
+    } else if (buttonCDown) {
+      return coordsFirefoxModXCDown
+    } else if (buttonCLeft) {
+      return coordsFirefoxModXCLeft
+    } else if (buttonCRight) {
+      return coordsFirefoxModXCRight
+    }
+  } else if (modif == "Y") {
+    if (buttonCUp) { ; code doesn't allow multiple c button variables to be true at once
+      return coordsFirefoxModYCUp
+    } else if (buttonCDown) {
+      return coordsFirefoxModYCDown
+    } else if (buttonCLeft) {
+      return coordsFirefoxModYCLeft
+    } else if (buttonCRight) {
+      return coordsFirefoxModYCRight
+    }
+  }
+  Msgbox, firefox! %buttonCUp% %buttonCDown% %buttonCLeft% %buttonCRight% 
+}
+
 setStick(coords) {
   global
   adjustedX := horizontalScaleFactor * (coords[1] + horizontalOffset)
@@ -338,6 +378,11 @@ convertToVJoy(coord) {
     ;Msgbox % Format("Converting melee coordingate {1} to vJoy. Percent: {2}, vJoy: {3}", coord, (50 * (coord + 1)), vJoyInterface.PercentTovJoy(50 * (coord + 1)))
   }
   return vJoyInterface.PercentTovJoy(50 * (coord + 1))
+}
+
+anyC() {
+  global
+  return buttonCUp or buttonCDown or buttonCLeft or buttonCRight
 }
 
 neither(a, b) {
