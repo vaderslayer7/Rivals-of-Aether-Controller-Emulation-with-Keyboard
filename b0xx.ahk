@@ -303,7 +303,7 @@ getCoordsWithNoShield(vert, horiz, modif) {
   if (neither(vert, horiz)) {
     return coordsOrigin
   } else if (vert and horiz) {
-    if (anyC() and modif == "X" or modif == "Y") {
+    if (anyC() and (modif == "X" or modif == "Y")) {
       return getCoordsFirefox(vert, horiz, modif)
     } else {
       switch modif {
