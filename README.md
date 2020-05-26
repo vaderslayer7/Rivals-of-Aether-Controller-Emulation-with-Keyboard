@@ -4,9 +4,8 @@ This is an Autohotkey script that lets you set up your keyboard to act like the 
 
 The script uses Autohotkey to read keyboard inputs and convert them to inputs to a virtual joystick called vJoy, which is used as a controller by Dolphin.
 
-The B0XX functionality provided is *incomplete*. Missing behavior includes:
+The B0XX functionality provided is currently *incomplete*. Missing behavior includes:
 
-* Extended Firefox angles for Mewtwo/Pikachu/Pichu/Sheik/Zelda upb
 * SDI nerf
 * Pivot utilt/angled ftilt nerf
 * Angled fsmash
@@ -57,4 +56,4 @@ The default scale and offset values should work fine, but may need to be adjuste
 
 # Development Info
 
-b0xx.exe is a compiled version of the b0xx.ahk file with the vjoy autohotkey library in as well. If you want to make changes to the script, edit the b0xx.ahk file and run it directly. 
+b0xx.exe is a compiled version of the b0xx.ahk file with the vjoy autohotkey library in as well. If you want to make changes to the script, edit the b0xx.ahk file and run it directly. Compile a new version of b0xx.exe by right clicking b0xx.ahk and clicking "Compile Script."

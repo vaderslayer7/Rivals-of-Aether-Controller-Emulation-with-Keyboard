@@ -24,7 +24,8 @@ hotkeys := [ "Analog Up"
            , "D-pad Up"
            , "D-pad Down"
            , "D-pad Left"
-           , "D-pad Right"]
+           , "D-pad Right"
+           , "Debug"]
 
 Menu, Tray, Click, 1
 Menu, Tray, Add, Edit Controls, ShowGui
@@ -84,8 +85,6 @@ handleSetParameter() {
   parameterId := getGuiEventControlId()
   parameterValue := getGuiEventValue()
 
-  Msgbox, in handleSetParameter()! paramId: %parameterId%, paramValue: %parameterValue%
-  
   IniWrite, %parameterValue%, parameters.ini, Parameters, %parameterId%
 }
 
@@ -128,11 +127,13 @@ buttonDown := false
 buttonLeft := false
 buttonRight := false
 
+buttonA := false
 buttonB := false
-buttonZ := false
-
 buttonL := false
 buttonR := false
+buttonX := false
+buttonY := false
+buttonZ := false
 
 buttonModX := false
 buttonModY := false
@@ -174,24 +175,48 @@ coordsLZButtonQuadrant34 := [0.7125, 0.6875]
 coordsLZButtonQuadrant34ModX := coordsRButtonQuadrant34ModX
 coordsLZButtonQuadrant34ModY := coordsRButtonQuadrant34ModY
 
-coordsFirefoxModXCUp := [0.6625, 0.4625]
-coordsFirefoxModXCDown := [0.775, 0.375]
-coordsFirefoxModXCLeft := [0.7875, 0.4625]
-coordsFirefoxModXCRight := [0.6375, 0.525]
+coordsFirefoxModXCDown := [0.6125, 0.3000]  ; ~26 deg
+coordsFirefoxModXCLeft := [0.6500, 0.3875]  ; ~31 deg
+coordsFirefoxModXCUp := [0.6125, 0.4375]    ; ~36 deg
+coordsFirefoxModXCRight := [0.6375, 0.5375] ; ~40 deg
+coordsFirefoxModYCRight := [0.5875, 0.7125] ; ~50 deg
+coordsFirefoxModYCUp := [0.5625, 0.7875]    ; ~54 deg
+coordsFirefoxModYCLeft := [0.4250, 0.7125]  ; ~59 deg
+coordsFirefoxModYCDown := [0.3500, 0.7125]  ; ~64 deg
 
-coordsFirefoxModYCUp := [0.55, 0.7875]
-coordsFirefoxModYCDown := [0.3875, 0.8]
-coordsFirefoxModYCLeft := [0.4625, 0.7875]
-coordsFirefoxModYCRight := [0.5875, 0.7125]
+coordsExtendedFirefoxModX := [0.9250, 0.3625]       ; ~21 deg
+coordsExtendedFirefoxModXCDown := [0.8875, 0.4375]  ; ~26 deg
+coordsExtendedFirefoxModXCLeft := [0.8500, 0.5125]  ; ~31 deg
+coordsExtendedFirefoxModXCUp := [0.7625, 0.5375]    ; ~36 deg
+coordsExtendedFirefoxModXCRight := [0.6375, 0.5375] ; ~40 deg
+coordsExtendedFirefoxModYCRight := [0.5875, 0.7125] ; ~50 deg
+coordsExtendedFirefoxModYCUp := [0.5750, 0.8000]    ; ~54 deg
+coordsExtendedFirefoxModYCLeft := [0.5125, 0.8500]  ; ~59 deg
+coordsExtendedFirefoxModYCDown := [0.4375, 0.8875]  ; ~64 deg
+coordsExtendedFirefoxModY := [0.3625, 0.9250]       ; ~69 deg
 
 ; TODO - add firefox angles
 ; TODO - add SDI nerf
 ; TODO - add pivot utilt nerf
 
-displayedDebug := false ; FIXME
-
 ; Updates the position on the analog stick based on the current held buttons
-updateStick() {
+updateAnalogStick() {
+  setAnalogStick(getCoords())
+}
+
+reflectCoords(coords, vert, horiz) {
+  x := coords[1]
+  y := coords[2]
+  if (vert == "D") {
+    y := -y
+  }
+  if (horiz == "L") {
+    x := -x
+  }
+  return [x, y]
+}
+
+getCoords() {
   global
   if (buttonUp and (mostRecentVertical == "U")) {
     vert := "U"
@@ -225,34 +250,7 @@ updateStick() {
     coords := getCoordsWithNoShield(vert, horiz, modif)
   }
 
-  reflectedCoords := reflectCoords(coords, vert, horiz)
-
-  ; FIXME
-  debugString := Format(debugFormatString
-    , reflectedCoords
-    , vert
-    , horiz
-    , modif
-    , buttonUp, buttonDown, buttonLeft, buttonRight, buttonModX, buttonModY
-    , buttonL, buttonR, buttonZ, buttonB)
-  if (displayedDebug == false) {
-    ;displayedDebug := true
-    ;Msgbox % debugString
-  }
-
-  setStick(reflectedCoords)
-}
-
-reflectCoords(coords, vert, horiz) {
-  x := coords[1]
-  y := coords[2]
-  if (vert == "U") {
-    y := -y
-  }
-  if (horiz == "L") {
-    x := -x
-  }
-  return [x, y]
+  return reflectCoords(coords, vert, horiz)
 }
 
 getCoordsWithR(vert, horiz, modif) {
@@ -280,13 +278,18 @@ getCoordsWithLZ(vert, horiz, modif) {
   if (neither(vert, horiz)) {
     return coordsOrigin
   } else if (vert and horiz) {
-    switch modif {
-      case "X":
-        return vert == "U" ? coordsLZButtonQuadrant12ModX : coordsLZButtonQuadrant34ModX
-      case "Y":
-        return vert == "U" ? coordsLZButtonQuadrant12ModY : coordsLZButtonQuadrant34ModY
-      default:
-        return vert == "U" ? coordsLZButtonQuadrant12 : coordsLZButtonQuadrant34
+    if (buttonZ and modif and not buttonL) {
+      ; Z + modifier + quadrant ddirection is an extended firefox angle (same direction, greater magnitude/tilt)
+      return modif == "X" ? coordsExtendedFirefoxModX : coordsExtendedFirefoxModY
+    } else {
+      switch modif {
+        case "X":
+          return vert == "U" ? coordsLZButtonQuadrant12ModX : coordsLZButtonQuadrant34ModX
+        case "Y":
+          return vert == "U" ? coordsLZButtonQuadrant12ModY : coordsLZButtonQuadrant34ModY
+        default:
+          return vert == "U" ? coordsLZButtonQuadrant12 : coordsLZButtonQuadrant34
+      }
     }
   } else if (vert) {
     return coordsLZButtonVertical
@@ -337,46 +340,44 @@ getCoordsFirefox(vert, horiz, modif) {
   global
   if (modif == "X") {
     if (buttonCUp) { ; code doesn't allow multiple c button variables to be true at once
-      return coordsFirefoxModXCUp
+      return buttonZ ? coordsExtendedFirefoxModXCUp : coordsFirefoxModXCUp
     } else if (buttonCDown) {
-      return coordsFirefoxModXCDown
+      return buttonZ ? coordsExtendedFirefoxModXCDown : coordsFirefoxModXCDown
     } else if (buttonCLeft) {
-      return coordsFirefoxModXCLeft
+      return buttonZ ? coordsExtendedFirefoxModXCLeft : coordsFirefoxModXCLeft
     } else if (buttonCRight) {
-      return coordsFirefoxModXCRight
+      return buttonZ ? coordsExtendedFirefoxModXCRight : coordsFirefoxModXCRight
     }
   } else if (modif == "Y") {
     if (buttonCUp) { ; code doesn't allow multiple c button variables to be true at once
-      return coordsFirefoxModYCUp
+      return buttonZ ? coordsExtendedFirefoxModYCUp : coordsFirefoxModYCUp
     } else if (buttonCDown) {
-      return coordsFirefoxModYCDown
+      return buttonZ ? coordsExtendedFirefoxModYCDown : coordsFirefoxModYCDown
     } else if (buttonCLeft) {
-      return coordsFirefoxModYCLeft
+      return buttonZ ? coordsExtendedFirefoxModYCLeft : coordsFirefoxModYCLeft
     } else if (buttonCRight) {
-      return coordsFirefoxModYCRight
+      return buttonZ ? coordsExtendedFirefoxModYCRight : coordsFirefoxModYCRight
     }
   }
-  Msgbox, firefox! %buttonCUp% %buttonCDown% %buttonCLeft% %buttonCRight% 
 }
 
-setStick(coords) {
+setAnalogStick(coords) {
+  global
+  convertedCoords := convertCoords(coords)
+  myStick.SetAxisByIndex(convertedCoords[1], 1)
+  myStick.SetAxisByIndex(convertedCoords[2], 2)
+}
+
+; Converts coordinates from melee values (-1 to 1) to vJoy values (0 to 32000ish)
+convertCoords(coords) {
   global
   adjustedX := horizontalScaleFactor * (coords[1] + horizontalOffset)
-  adjustedY := verticalScaleFactor * (coords[2] + verticalOffset)
-  myStick.SetAxisByIndex(convertToVJoy(adjustedX), 1)
-  myStick.SetAxisByIndex(convertToVJoy(adjustedY), 2)
-  if (displayedDebug == false) {
-    ;displayedDebug := true
-    ;Msgbox % Format("Set stick to [{1}, {2}] ([{3}, {4}])", coords[1], coords[2], convertToVJoy(coords[1]), -convertToVJoy(coords[2]))
-  }
+  adjustedY := verticalScaleFactor * (-coords[2] + verticalOffset)
+  return [convertToVJoy(adjustedX), convertToVJoy(adjustedY)]
 }
 
 convertToVJoy(coord) {
   global
-  if (not displayedDebug) {
-    ;displayedDebug := true
-    ;Msgbox % Format("Converting melee coordingate {1} to vJoy. Percent: {2}, vJoy: {3}", coord, (50 * (coord + 1)), vJoyInterface.PercentTovJoy(50 * (coord + 1)))
-  }
   return vJoyInterface.PercentTovJoy(50 * (coord + 1))
 }
 
@@ -388,16 +389,6 @@ anyC() {
 neither(a, b) {
   return (not a) and (not b)
 }
-
-debugFormatString = 
-(
-  melee coords: {1}
-  vert: {2}
-  horiz: {3}
-  modif: {4}
-  direction buttons: (u/d/l/r/mx/my): {5}/{6}/{7}/{8}/{9}/{10}
-  action buttons (L/R/Z/B): {11}/{12}/{13}/{14}
-)
 
 validateHK(GuiControl) {
  global lastHK
@@ -519,78 +510,80 @@ SetKeyDelay, 0
 Label1:
   buttonUp := true
   mostRecentVertical := "U"
-  updateStick()
+  updateAnalogStick()
   return
 
 Label1_UP:
   buttonUp := false
-  updateStick()
+  updateAnalogStick()
   return
 
 ; Analog Down
 Label2:
   buttonDown := true
   mostRecentVertical := "D"
-  updateStick()
+  updateAnalogStick()
   return
 
 Label2_UP:
   buttonDown := false
-  updateStick()
+  updateAnalogStick()
   return
 
 ; Analog Left
 Label3:
   buttonLeft := true
   mostRecentHorizontal := "L"
-  updateStick()
+  updateAnalogStick()
   return
 
 Label3_UP:
   buttonLeft := false
-  updateStick()
+  updateAnalogStick()
   return
 
 ; Analog Right
 Label4:
   buttonRight := true
   mostRecentHorizontal := "R"
-  updateStick()
+  updateAnalogStick()
   return
 
 Label4_UP:
   buttonRight := false
-  updateStick()
+  updateAnalogStick()
   return
 
 ; ModX
 Label5:
   buttonModX := true
-  updateStick()
+  updateAnalogStick()
   return
 
 Label5_UP:
   buttonModX := false
-  updateStick()
+  updateAnalogStick()
   return
 
 ; ModY
 Label6:
   buttonModY := true
-  updateStick()
+  updateAnalogStick()
   return
 
 Label6_UP:
   buttonModY := false
-  updateStick()
+  updateAnalogStick()
   return
 
 ; A
 Label7:
+  buttonA := true
   myStick.SetBtn(1,1)
   return
 
 Label7_UP:
+  buttonA := false
   myStick.SetBtn(0,1)
   return
 
@@ -598,56 +591,60 @@ Label7_UP:
 Label8:
   buttonB := true
   myStick.SetBtn(1, 2)
-  updateStick()
+  updateAnalogStick()
   return
 
 Label8_UP:
   buttonB := false
   myStick.SetBtn(0, 2)
-  updateStick()
+  updateAnalogStick()
   return
 
 ; L
 Label9:
   buttonL := true
   myStick.SetBtn(1, 3)
-  updateStick()
+  updateAnalogStick()
   return
 
 Label9_UP:
   buttonL := false
   myStick.SetBtn(0, 3)
-  updateStick()
+  updateAnalogStick()
   return
 
 ; R
 Label10:
   buttonR := true
   myStick.SetBtn(1, 4)
-  updateStick()
+  updateAnalogStick()
   return
 
 Label10_UP:
   buttonR := false
   myStick.SetBtn(0, 4)
-  updateStick()
+  updateAnalogStick()
   return
 
 ; X
 Label11:
+  buttonX := true
   myStick.SetBtn(1, 5)
   return
 
 Label11_UP:
+  buttonX := false
   myStick.SetBtn(0, 5)
   return
 
 ; Y
 Label12:
+  buttonY := true
   myStick.SetBtn(1, 6)
   return
 
 Label12_UP:
+  buttonY := false
   myStick.SetBtn(0, 6)
   return
 
@@ -655,13 +652,13 @@ Label12_UP:
 Label13:
   buttonZ := true
   myStick.SetBtn(1, 7)
-  updateStick()
+  updateAnalogStick()
   return
 
 Label13_UP:
   buttonZ := false
   myStick.SetBtn(0, 7)
-  updateStick()
+  updateAnalogStick()
   return
 
 ; C Up
@@ -674,14 +671,14 @@ Label14:
   } else {
       myStick.SetBtn(1, 8)
   }
-  updateStick()
+  updateAnalogStick()
   return
 
 Label14_UP:
   buttonCUp := false
   myStick.SetBtn(0, 8)
   myStick.SetBtn(0, 13)
-  updateStick()
+  updateAnalogStick()
   return
 
 ; C Down
@@ -694,14 +691,14 @@ Label15:
   } else {
       myStick.SetBtn(1, 9)
   }
-  updateStick()
+  updateAnalogStick()
   return
 
 Label15_UP:
   buttonCDown := false
   myStick.SetBtn(0, 9)
   myStick.SetBtn(0, 14)
-  updateStick()
+  updateAnalogStick()
   return
 
 ; C Left
@@ -714,14 +711,14 @@ Label16:
   } else {
       myStick.SetBtn(1, 10)
   }
-  updateStick()
+  updateAnalogStick()
   return
 
 Label16_UP:
   buttonCLeft := false
   myStick.SetBtn(0, 10)
   myStick.SetBtn(0, 15)
-  updateStick()
+  updateAnalogStick()
   return
 
 ; C Right
@@ -734,14 +731,14 @@ Label17:
   } else {
       myStick.SetBtn(1, 11)
   }
-  updateStick()
+  updateAnalogStick()
   return
 
 Label17_UP:
   buttonCRight := false
   myStick.SetBtn(0, 11)
   myStick.SetBtn(0, 16)
-  updateStick()
+  updateAnalogStick()
   return
 
 ; Start
@@ -789,6 +786,27 @@ Label22_UP:
   myStick.SetBtn(0, 16)
   return
 
+; Debug
+Label23:
+  debugFormatString = 
+  (
+    Analog Stick Coordinates: [{1}, {2}] ([{3}, {4}])
+    Direction Buttons: (u/d/l/r/mx/my): {5}/{6}/{7}/{8}/{9}/{10}
+    Action Buttons (A/B/L/R/X/Y/Z): {11}/{12}/{13}/{14}/{15}/{16}/{17}
+    C Buttons (Up/Down/Left/Right): {18}/{19}/{20}/{21}
+  )
+  coords := getCoords()
+  convertedCoords := convertCoords(coords)
+  debugString := Format(debugFormatString
+    , coords[1], coords[2]
+    , convertedCoords[1], convertedCoords[2]
+    , buttonUp, buttonDown, buttonLeft, buttonRight, buttonModX, buttonModY
+    , buttonA, buttonB, buttonL, buttonR, buttonX, buttonY, buttonZ
+    , buttonCUp, buttonCDown, buttonCLeft, buttonCRight)
+  Msgbox % debugString
+
+Label23_UP:
+  return
 
 clearC() {
   buttonCUp := false
@@ -796,4 +814,3 @@ clearC() {
   buttonCLeft := false
   buttonCRight := false
 }
-
