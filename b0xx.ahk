@@ -168,7 +168,7 @@ coordsRShieldQuadrant34ModY := [0.5, 0.85]
 
 coordsLZShieldVertical := coordsVertical
 coordsLZShieldHorizontal := coordsHorizontal
-coordsLZShieldQuadrant12 := coordsRShieldQuadrant
+coordsLZShieldQuadrant12 := coordsQuadrant
 coordsLZShieldQuadrant12ModX := coordsQuadrantModX
 coordsLZShieldQuadrant12ModY := coordsQuadrantModY
 coordsLZShieldQuadrant34 := [0.7125, 0.6875]
