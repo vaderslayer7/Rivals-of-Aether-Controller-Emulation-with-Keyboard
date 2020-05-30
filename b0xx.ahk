@@ -158,22 +158,22 @@ coordsQuadrant := [0.7, 0.7]
 coordsQuadrantModX := [0.7375, 0.2875]
 coordsQuadrantModY := [0.2875, 0.7375]
 
-coordsRButtonVertical := [0, 0.5375] ; TODO - find out how/if ModX and ModY affect cardinal directions
-coordsRButtonHorizontal := [0.6375, 0]
-coordsRButtonQuadrant := [0.5375, 0.5375]
-coordsRButtonQuadrant12ModX := coordsRButtonQuadrant ; TODO - verify that modiefiers have no affect on upward quadrant angles with R
-coordsRButtonQuadrant12ModY := coordsRButtonQuadrant
-coordsRButtonQuadrant34ModX := [0.6375, 0.375]
-coordsRButtonQuadrant34ModY := [0.5, 0.85]
+coordsRShieldVertical := [0, 0.5375] ; TODO - find out how/if ModX and ModY affect cardinal directions
+coordsRShieldHorizontal := [0.6375, 0]
+coordsRShieldQuadrant := [0.5375, 0.5375]
+coordsRShieldQuadrant12ModX := coordsRShieldQuadrant ; TODO - verify that modiefiers have no affect on upward quadrant angles with R
+coordsRShieldQuadrant12ModY := coordsRShieldQuadrant
+coordsRShieldQuadrant34ModX := [0.6375, 0.375]
+coordsRShieldQuadrant34ModY := [0.5, 0.85]
 
-coordsLZButtonVertical := coordsVertical
-coordsLZButtonHorizontal := coordsHorizontal
-coordsLZButtonQuadrant12 := coordsRButtonQuadrant
-coordsLZButtonQuadrant12ModX := coordsQuadrantModX
-coordsLZButtonQuadrant12ModY := coordsQuadrantModY
-coordsLZButtonQuadrant34 := [0.7125, 0.6875]
-coordsLZButtonQuadrant34ModX := coordsRButtonQuadrant34ModX
-coordsLZButtonQuadrant34ModY := coordsRButtonQuadrant34ModY
+coordsLZShieldVertical := coordsVertical
+coordsLZShieldHorizontal := coordsHorizontal
+coordsLZShieldQuadrant12 := coordsRShieldQuadrant
+coordsLZShieldQuadrant12ModX := coordsQuadrantModX
+coordsLZShieldQuadrant12ModY := coordsQuadrantModY
+coordsLZShieldQuadrant34 := [0.7125, 0.6875]
+coordsLZShieldQuadrant34ModX := coordsRShieldQuadrant34ModX
+coordsLZShieldQuadrant34ModY := coordsRShieldQuadrant34ModY
 
 coordsFirefoxModXCDown := [0.6125, 0.3000]  ; ~26 deg
 coordsFirefoxModXCLeft := [0.6500, 0.3875]  ; ~31 deg
@@ -260,16 +260,16 @@ getCoordsWithR(vert, horiz, modif) {
   } else if (vert and horiz) {
     switch modif {
       case "X":
-        return vert == "U" ? coordsRButtonQuadrant12ModX : coordsRButtonQuadrant34ModX
+        return vert == "U" ? coordsRShieldQuadrant12ModX : coordsRShieldQuadrant34ModX
       case "Y":
-        return vert == "U" ? coordsRButtonQuadrant12ModY : coordsRButtonQuadrant34ModY
+        return vert == "U" ? coordsRShieldQuadrant12ModY : coordsRShieldQuadrant34ModY
       default:
-        return coordsRButtonQuadrant
+        return coordsRShieldQuadrant
     }
   } else if (vert) {
-    return coordsRButtonVertical
+    return coordsRShieldVertical
   } else {
-    return coordsRButtonHorizontal
+    return coordsRShieldHorizontal
   }
 }
 
@@ -284,17 +284,17 @@ getCoordsWithLZ(vert, horiz, modif) {
     } else {
       switch modif {
         case "X":
-          return vert == "U" ? coordsLZButtonQuadrant12ModX : coordsLZButtonQuadrant34ModX
+          return vert == "U" ? coordsLZShieldQuadrant12ModX : coordsLZShieldQuadrant34ModX
         case "Y":
-          return vert == "U" ? coordsLZButtonQuadrant12ModY : coordsLZButtonQuadrant34ModY
+          return vert == "U" ? coordsLZShieldQuadrant12ModY : coordsLZShieldQuadrant34ModY
         default:
-          return vert == "U" ? coordsLZButtonQuadrant12 : coordsLZButtonQuadrant34
+          return vert == "U" ? coordsLZShieldQuadrant12 : coordsLZShieldQuadrant34
       }
     }
   } else if (vert) {
-    return coordsLZButtonVertical
+    return coordsLZShieldVertical
   } else {
-    return coordsLZButtonHorizontal
+    return coordsLZShieldHorizontal
   }
 }
 
