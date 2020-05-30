@@ -161,8 +161,8 @@ coordsQuadrantModY := [0.2875, 0.7375]
 coordsRButtonVertical := [0, 0.5375] ; TODO - find out how/if ModX and ModY affect cardinal directions
 coordsRButtonHorizontal := [0.6375, 0]
 coordsRButtonQuadrant := [0.5375, 0.5375]
-coordsRButtonQuadrant12ModX := coordsQuadrantModX ; TODO - find actual values for R+modifier upward angles
-coordsRButtonQuadrant12ModY := coordsQuadrantModY
+coordsRButtonQuadrant12ModX := coordsRButtonQuadrant ; TODO - verify that modiefiers have no affect on upward quadrant angles with R
+coordsRButtonQuadrant12ModY := coordsRButtonQuadrant
 coordsRButtonQuadrant34ModX := [0.6375, 0.375]
 coordsRButtonQuadrant34ModY := [0.5, 0.85]
 
