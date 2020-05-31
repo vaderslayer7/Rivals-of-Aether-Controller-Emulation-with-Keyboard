@@ -190,12 +190,15 @@ cRight() {
 
 modX() {
   global
-  return buttonModX and not buttonModY and not (buttonLeft and buttonRight)
+  ; deactivate if either:
+  ;   - modY is also held
+  ;   - both left and right are held while neither up or down is active
+  return buttonModX and not buttonModY and not (buttonLeft and buttonRight and not anyVert()) 
 }
 
 modY() {
   global
-  return buttonModY and not buttonModX and not (buttonLeft and buttonRight)
+  return buttonModY and not buttonModX and not (buttonLeft and buttonRight and not anyVert())
 }
 
 anyVert() {
