@@ -49,6 +49,7 @@ The Autohotkey script can be configured to change the keybindings. Open the GUI 
 ## A Specific Technique Doesn't Work
 * Use www.keyboardchecker.com to make sure all of the required keyboard inputs can be recorded simultaneously on your keyboard.
 * Try restarting the Autohotkey script.
+* Add a "debug" hotkey, hold down the keys related to you technique, and press debug. The dialog box that appears will tell you whether the script is actually seeing all of your button presses.
 * Hmu (TuberLuber on Discord/Reddit) or file an issue on Github.
 
 # Development Info
