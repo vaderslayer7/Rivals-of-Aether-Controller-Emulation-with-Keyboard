@@ -368,17 +368,15 @@ setAnalogStick(coords) {
   myStick.SetAxisByIndex(convertedCoords[2], 2)
 }
 
-; Converts coordinates from melee values (-1 to 1) to vJoy values (0 to 32000ish)
+; Converts coordinates from melee values (-1 to 1) to vJoy values (0 to 32767).
+mx = 10271 ; Why this number? idk, I would have thought it should be 16384 * (80 / 128) = 10240, but this works
+my = -10271
+bx = 16448 ; 16384 + 64
+by = 16320 ; 16384 - 64
 convertCoords(coords) {
   global
-  adjustedX := horizontalScaleFactor * (coords[1] + horizontalOffset)
-  adjustedY := verticalScaleFactor * (-coords[2] + verticalOffset)
-  return [convertToVJoy(adjustedX), convertToVJoy(adjustedY)]
-}
-
-convertToVJoy(coord) {
-  global
-  return vJoyInterface.PercentTovJoy(50 * (coord + 1))
+  return [ mx * coords[1] + bx
+         , my * coords[2] + by ]
 }
 
 anyC() {
