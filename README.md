@@ -28,9 +28,7 @@ I am unaffiliated with the creators/producers of the B0XX.
 
 # Configuration
 
-The Autohotkey script can be configured to change the keybindings and to adjust analog stick scale/offset values. Both of these can be edited in a GUI by finding the Autohotkey script in the task bar hidden icons (lil ^ icon in lower right -> green H icon (left click, or right click -> "Edit Controls")). Alternately they can be edited by modifying the hotkeys.ini and parameters.ini files directly. Changes made in the GUI are automatically saved to the appropriate files and reflected in realtime.
-
-The default scale and offset values should work fine, but may need to be adjusted if you run into issues. Common manifestations of mis-tuned scaling/offset are failed shield drop, missing airdodge/firefox angles, incorrect tilt/smash, etc. To check this, enter debug mode in 20XX (Start + D-Right + D-Right) and turn on the analog stick display with X + D-Right. Compare the analog stick values with those provided in the B0XX melee manual.
+The Autohotkey script can be configured to change the keybindings. Open the GUI by finding the Autohotkey script in the task bar hidden icons (lil ^ icon in lower right -> green H icon (left click, or right click -> "Edit Controls")). Alternatively they can be edited by modifying the hotkeys.ini file directly. Changes made in the GUI are automatically saved to the appropriate files and reflected in real time.
 
 # Default Controls
 * W/E/R: Left/Down/Right
@@ -51,8 +49,8 @@ The default scale and offset values should work fine, but may need to be adjuste
 
 ## A Specific Technique Doesn't Work
 * Use www.keyboardchecker.com to make sure all of the required keyboard inputs can be recorded simultaneously on your keyboard.
-* Use 20XX to check that the analog stick coordinates the game sees are what you expect, and adjust the scale/offset parameters appropriately (see Configuration).
-* If neither of the above work, feel free to hmu or file an issue on github.
+* Try restarting the Autohotkey script.
+* Hmu (TuberLuber on Discord/Reddit) or file an issue on Github.
 
 # Development Info
 

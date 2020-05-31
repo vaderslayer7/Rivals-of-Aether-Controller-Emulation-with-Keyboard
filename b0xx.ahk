@@ -53,57 +53,6 @@ for index, element in hotkeys{
   Gui, Add, CheckBox, x+5 vCB%index% Checked gGuiLabel, Prevent Default Behavior  ;Add checkboxes to allow the Windows key (#) as a modifier..
 }                                                               ;Check the box if Win modifier is used.
 
-; --------------------------- configurable parameters
-
-; This godawful formatting is because autohotkey requires new lines to start with a comma
-parameters := [ { "description": "Vertical Offset"
-                , "id": "verticalOffset" }
-              , { "description": "Horizontal Offset"
-                , "id": "horizontalOffset" }
-              , { "description": "Vertical Scale Factor"
-                , "id": "verticalScaleFactor" }
-              , { "description": "Horizontal Scale Factor"
-                , "id": "horizontalScaleFactor" } ]
-
-SetFormat, Float, 0.4
-Gui, Add, Text, ym h0 Section,
-for index, element in parameters {
-  description := element.description
-  id := element.id
-
-  IniRead, %id%, parameters.ini, Parameters, %id%
-
-  Gui, Add, Text, xs, %description%:
-  Gui, Add, Edit, x+5 r1 w43 Limit6 v%id% ghandleSetParameter, % %id%
-}
-
-handleSetParameter() {
-  global parameters
-
-  Gui, Submit, NoHide
-
-  parameterId := getGuiEventControlId()
-  parameterValue := getGuiEventValue()
-
-  IniWrite, %parameterValue%, parameters.ini, Parameters, %parameterId%
-}
-
-; Encapsulate these one liners as functions because otherwise it's extremely
-; non-obvious what 'A_GuiControl' and '%A_GuiControl' do
-
-; Returns a string containing the name of the global variable associated with the
-; GuiControl that spawned the current thread
-getGuiEventControlId() {
-  return A_GuiControl
-}
-
-; Returns the value of the global variable associated with the GuiControl that
-; spawned the current thread
-getGuiEventValue() {
-  id := %A_GuiControl%
-  return %id% 
-}
-
 ;----------Start Hotkey Handling-----------
 
 ; Create an object from vJoy Interface Class.
