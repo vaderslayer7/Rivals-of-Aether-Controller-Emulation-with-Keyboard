@@ -150,7 +150,11 @@ coordsExtendedFirefoxModY := [0.3625, 0.9250]       ; ~69 deg
 
 ; Updates the position on the analog stick based on the current held buttons
 updateAnalogStick() {
-  setAnalogStick(getCoords())
+  setAnalogStick(getAnalogCoords())
+}
+
+updateCStick() {
+  setCStick(getCStickCoords())
 }
 
 reflectCoords(coords, vert, horiz) {
@@ -165,7 +169,7 @@ reflectCoords(coords, vert, horiz) {
   return [x, y]
 }
 
-getCoords() {
+getAnalogCoords() {
   global
   if (buttonUp and (mostRecentVertical == "U")) {
     vert := "U"
@@ -192,17 +196,17 @@ getCoords() {
   }
 
   if (buttonR) {
-    coords := getCoordsWithR(vert, horiz, modif)
+    coords := getAnalogCoordsWithR(vert, horiz, modif)
   } else if (buttonL or buttonZ) {
-    coords := getCoordsWithLZ(vert, horiz, modif)
+    coords := getAnalogCoordsWithLZ(vert, horiz, modif)
   } else {
-    coords := getCoordsWithNoShield(vert, horiz, modif)
+    coords := getAnalogCoordsWithNoShield(vert, horiz, modif)
   }
 
   return reflectCoords(coords, vert, horiz)
 }
 
-getCoordsWithR(vert, horiz, modif) {
+getAnalogCoordsWithR(vert, horiz, modif) {
   global
   if (neither(vert, horiz)) {
     return coordsOrigin
@@ -222,7 +226,7 @@ getCoordsWithR(vert, horiz, modif) {
   }
 }
 
-getCoordsWithLZ(vert, horiz, modif) {
+getAnalogCoordsWithLZ(vert, horiz, modif) {
   global
   if (neither(vert, horiz)) {
     return coordsOrigin
@@ -247,13 +251,13 @@ getCoordsWithLZ(vert, horiz, modif) {
   }
 }
 
-getCoordsWithNoShield(vert, horiz, modif) {
+getAnalogCoordsWithNoShield(vert, horiz, modif) {
   global
   if (neither(vert, horiz)) {
     return coordsOrigin
   } else if (vert and horiz) {
     if (anyC() and (modif == "X" or modif == "Y")) {
-      return getCoordsFirefox(vert, horiz, modif)
+      return getAnalogCoordsFirefox(vert, horiz, modif)
     } else {
       switch modif {
         case "X":
@@ -285,7 +289,7 @@ getCoordsWithNoShield(vert, horiz, modif) {
   }
 }
 
-getCoordsFirefox(vert, horiz, modif) {
+getAnalogCoordsFirefox(vert, horiz, modif) {
   global
   if (modif == "X") {
     if (buttonCUp) { ; code doesn't allow multiple c button variables to be true at once
@@ -315,6 +319,43 @@ setAnalogStick(coords) {
   convertedCoords := convertCoords(coords)
   myStick.SetAxisByIndex(convertedCoords[1], 1)
   myStick.SetAxisByIndex(convertedCoords[2], 2)
+}
+
+getCStickCoords() {
+  global
+
+  ; Unlike analog direction buttons, this script unsets any existing C button press
+  ; variables when a new C button is pressed, so only one is true at a time
+  if (buttonCUp) {
+    return [0, 1]
+  } else if (buttonCDown) {
+    return [0, -1]
+  } else if (buttonCLeft) {
+    if (buttonModX and buttonUp) {
+      return [-0.9, 0.5]
+    } else if (buttonModX and buttonDown) {
+      return [-0.9, -0.5]
+    } else {
+      return [-1, 0]
+    }
+  } else if (buttonCRight) {
+    if (buttonModX and buttonUp) {
+      return [0.9, 0.5]
+    } else if (buttonModX and buttonDown) {
+      return [0.9, -0.5]
+    } else {
+      return [1, 0]
+    }
+  } else {
+    return [0, 0]
+  }
+}
+
+setCStick(coords) {
+  global
+  convertedCoords := convertCoords(coords)
+  myStick.SetAxisByIndex(convertedCoords[1], 4)
+  myStick.SetAxisByIndex(convertedCoords[2], 5)
 }
 
 ; Converts coordinates from melee values (-1 to 1) to vJoy values (0 to 32767).
@@ -526,73 +567,73 @@ Label6_UP:
 ; A
 Label7:
   buttonA := true
-  myStick.SetBtn(1,1)
+  myStick.SetBtn(1,5)
   return
 
 Label7_UP:
   buttonA := false
-  myStick.SetBtn(0,1)
+  myStick.SetBtn(0,5)
   return
 
 ; B
 Label8:
   buttonB := true
-  myStick.SetBtn(1, 2)
+  myStick.SetBtn(1, 4)
   updateAnalogStick()
   return
 
 Label8_UP:
   buttonB := false
-  myStick.SetBtn(0, 2)
+  myStick.SetBtn(0, 4)
   updateAnalogStick()
   return
 
 ; L
 Label9:
   buttonL := true
-  myStick.SetBtn(1, 3)
+  myStick.SetBtn(1, 1)
   updateAnalogStick()
   return
 
 Label9_UP:
   buttonL := false
-  myStick.SetBtn(0, 3)
+  myStick.SetBtn(0, 1)
   updateAnalogStick()
   return
 
 ; R
 Label10:
   buttonR := true
-  myStick.SetBtn(1, 4)
+  myStick.SetBtn(1, 3)
   updateAnalogStick()
   return
 
 Label10_UP:
   buttonR := false
-  myStick.SetBtn(0, 4)
+  myStick.SetBtn(0, 3)
   updateAnalogStick()
   return
 
 ; X
 Label11:
   buttonX := true
-  myStick.SetBtn(1, 5)
+  myStick.SetBtn(1, 6)
   return
 
 Label11_UP:
   buttonX := false
-  myStick.SetBtn(0, 5)
+  myStick.SetBtn(0, 6)
   return
 
 ; Y
 Label12:
   buttonY := true
-  myStick.SetBtn(1, 6)
+  myStick.SetBtn(1, 2)
   return
 
 Label12_UP:
   buttonY := false
-  myStick.SetBtn(0, 6)
+  myStick.SetBtn(0, 2)
   return
 
 ; Z
@@ -611,126 +652,126 @@ Label13_UP:
 ; C Up
 Label14:
   clearC()
-  buttonCUp := true
   if (buttonModX and buttonModY) {
-      ; Pressing ModX and ModY simultaneously changes C buttons to D pad
-      myStick.SetBtn(1, 13)
+    ; Pressing ModX and ModY simultaneously changes C buttons to D pad
+    myStick.SetBtn(1, 9)
   } else {
-      myStick.SetBtn(1, 8)
+    buttonCUp := true
+    updateCStick()
+    updateAnalogStick()
   }
-  updateAnalogStick()
   return
 
 Label14_UP:
   buttonCUp := false
-  myStick.SetBtn(0, 8)
-  myStick.SetBtn(0, 13)
+  myStick.SetBtn(0, 9)
+  updateCStick()
   updateAnalogStick()
   return
 
 ; C Down
 Label15:
   clearC()
-  buttonCDown := true
   if (buttonModX and buttonModY) {
-      ; Pressing ModX and ModY simultaneously changes C buttons to D pad
-      myStick.SetBtn(1, 14)
+    ; Pressing ModX and ModY simultaneously changes C buttons to D pad
+    myStick.SetBtn(1, 11)
   } else {
-      myStick.SetBtn(1, 9)
+    buttonCDown := true
+    updateCStick()
+    updateAnalogStick()
   }
-  updateAnalogStick()
   return
 
 Label15_UP:
   buttonCDown := false
-  myStick.SetBtn(0, 9)
-  myStick.SetBtn(0, 14)
+  myStick.SetBtn(0, 11)
+  updateCStick()
   updateAnalogStick()
   return
 
 ; C Left
 Label16:
   clearC()
-  buttonCLeft := true
   if (buttonModX and buttonModY) {
-      ; Pressing ModX and ModY simultaneously changes C buttons to D pad
-      myStick.SetBtn(1, 15)
+    ; Pressing ModX and ModY simultaneously changes C buttons to D pad
+    myStick.SetBtn(1, 10)
   } else {
-      myStick.SetBtn(1, 10)
+    buttonCLeft := true
+    updateCStick()
+    updateAnalogStick()
   }
-  updateAnalogStick()
   return
 
 Label16_UP:
   buttonCLeft := false
   myStick.SetBtn(0, 10)
-  myStick.SetBtn(0, 15)
+  updateCStick()
   updateAnalogStick()
   return
 
 ; C Right
 Label17:
   clearC()
-  buttonCRight := true
   if (buttonModX and buttonModY) {
-      ; Pressing ModX and ModY simultaneously changes C buttons to D pad
-      myStick.SetBtn(1, 16)
+    ; Pressing ModX and ModY simultaneously changes C buttons to D pad
+    myStick.SetBtn(1, 12)
   } else {
-      myStick.SetBtn(1, 11)
+    buttonCRight := true
+    updateCStick()
+    updateAnalogStick()
   }
-  updateAnalogStick()
   return
 
 Label17_UP:
   buttonCRight := false
-  myStick.SetBtn(0, 11)
-  myStick.SetBtn(0, 16)
+  myStick.SetBtn(0, 12)
+  updateCStick()
   updateAnalogStick()
   return
 
 ; Start
 Label18:
-  myStick.SetBtn(1, 12)
+  myStick.SetBtn(1, 8)
   return
 
 Label18_UP:
-  myStick.SetBtn(0, 12)
+  myStick.SetBtn(0, 8)
   return
 
 ; D Up
 Label19:
-  myStick.SetBtn(1, 13)
+  myStick.SetBtn(1, 9)
   return
 
 Label19_UP:
-  myStick.SetBtn(0, 13)
+  myStick.SetBtn(0, 9)
   return
 
 ; D Down
 Label20:
-  myStick.SetBtn(1, 14)
+  myStick.SetBtn(1, 11)
   return
 
 Label20_UP:
-  myStick.SetBtn(0, 14)
+  myStick.SetBtn(0, 11)
   return
 
 ; D Left
 Label21:
-  myStick.SetBtn(1, 15)
+  myStick.SetBtn(1, 10)
   return
 
 Label21_UP:
-  myStick.SetBtn(0, 15)
+  myStick.SetBtn(0, 10)
   return
 
 ; D Right
 Label22:
-  myStick.SetBtn(1, 16)
+  myStick.SetBtn(1, 12)
   return
 
 Label22_UP:
-  myStick.SetBtn(0, 16)
+  myStick.SetBtn(0, 12)
   return
 
 ; Debug
@@ -740,15 +781,20 @@ Label23:
     Analog Stick Coordinates: [{1}, {2}] ([{3}, {4}])
     Direction Buttons: (u/d/l/r/mx/my): {5}/{6}/{7}/{8}/{9}/{10}
     Action Buttons (A/B/L/R/X/Y/Z): {11}/{12}/{13}/{14}/{15}/{16}/{17}
-    C Buttons (Up/Down/Left/Right): {18}/{19}/{20}/{21}
+    C Stick Coordinates: [{18}, {19}] ([{20}, {21}])
+    C Buttons (Up/Down/Left/Right): {22}/{23}/{24}/{25}
   )
-  coords := getCoords()
+  coords := getAnalogCoords()
   convertedCoords := convertCoords(coords)
+  cStickCoords := getCStickCoords()
+  convertedCStickCoords := convertCoords(cStickCoords)
   debugString := Format(debugFormatString
     , coords[1], coords[2]
     , convertedCoords[1], convertedCoords[2]
     , buttonUp, buttonDown, buttonLeft, buttonRight, buttonModX, buttonModY
     , buttonA, buttonB, buttonL, buttonR, buttonX, buttonY, buttonZ
+    , cStickCoords[1], cStickCoords[2]
+    , convertedCStickCoords[1], convertedCStickCoords[2]
     , buttonCUp, buttonCDown, buttonCLeft, buttonCRight)
   Msgbox % debugString
 

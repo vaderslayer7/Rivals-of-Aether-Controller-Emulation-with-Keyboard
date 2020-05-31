@@ -8,7 +8,6 @@ The B0XX functionality provided is currently *incomplete*. Missing behavior incl
 
 * SDI nerf
 * Pivot utilt/angled ftilt nerf
-* Angled fsmash
 * B0XX r2 lightshield buttons
 
 I am unaffiliated with the creators/producers of the B0XX. 
