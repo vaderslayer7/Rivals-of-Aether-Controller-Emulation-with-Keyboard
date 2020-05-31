@@ -95,6 +95,8 @@ buttonCRight := false
 mostRecentVertical := ""
 mostRecentHorizontal := ""
 
+mostRecentC := ""
+
 ; b0xx constants
 coordsOrigin := [0, 0]
 coordsVertical := [0, 1]
@@ -110,7 +112,7 @@ coordsQuadrantModY := [0.2875, 0.7375]
 coordsRShieldVertical := [0, 0.5375] ; TODO - find out how/if ModX and ModY affect cardinal directions
 coordsRShieldHorizontal := [0.6375, 0]
 coordsRShieldQuadrant := [0.5375, 0.5375]
-coordsRShieldQuadrant12ModX := coordsRShieldQuadrant ; TODO - verify that modiefiers have no affect on upward quadrant angles with R
+coordsRShieldQuadrant12ModX := coordsRShieldQuadrant ; TODO - verify that modifiers have no affect on upward quadrant angles with R
 coordsRShieldQuadrant12ModY := coordsRShieldQuadrant
 coordsRShieldQuadrant34ModX := [0.6375, 0.375]
 coordsRShieldQuadrant34ModY := [0.5, 0.85]
@@ -144,9 +146,77 @@ coordsExtendedFirefoxModYCLeft := [0.5125, 0.8500]  ; ~59 deg
 coordsExtendedFirefoxModYCDown := [0.4375, 0.8875]  ; ~64 deg
 coordsExtendedFirefoxModY := [0.3625, 0.9250]       ; ~69 deg
 
-; TODO - add firefox angles
-; TODO - add SDI nerf
-; TODO - add pivot utilt nerf
+; Utility functions
+
+up() {
+  global
+  return buttonUp and mostRecentVertical == "U"
+}
+
+down() {
+  global
+  return buttonDown and mostRecentVertical == "D"
+}
+
+left() {
+  global
+  return buttonLeft and mostRecentHorizontal == "L"
+}
+
+right() {
+  global
+  return buttonRight and mostRecentHorizontal == "R"
+}
+
+cUp() {
+  global
+  return buttonCUp and mostRecentC == "U"
+}
+
+cDown() {
+  global
+  return buttonCDown and mostRecentC == "D"
+}
+
+cLeft() {
+  global
+  return buttonCLeft and mostRecentC == "L"
+}
+
+cRight() {
+  global
+  return buttonCRight and mostRecentC == "R"
+}
+
+modX() {
+  global
+  return buttonModX and not buttonModY and not (buttonLeft and buttonRight)
+}
+
+modY() {
+  global
+  return buttonModY and not buttonModX and not (buttonLeft and buttonRight)
+}
+
+anyVert() {
+  global
+  return up() or down()
+}
+
+anyHoriz() {
+  global
+  return left() or right()
+}
+
+anyMod() {
+  global
+  return modX() or modY()
+}
+
+anyC() {
+  global
+  return cUp() or cDown() or cLeft() or cRight()
+}
 
 ; Updates the position on the analog stick based on the current held buttons
 updateAnalogStick() {
@@ -157,158 +227,129 @@ updateCStick() {
   setCStick(getCStickCoords())
 }
 
-reflectCoords(coords, vert, horiz) {
+getAnalogCoords() {
+  global
+  if (buttonR) {
+    coords := getAnalogCoordsWithR()
+  } else if (buttonL or buttonZ) {
+    coords := getAnalogCoordsWithLZ()
+  } else {
+    coords := getAnalogCoordsWithNoShield()
+  }
+
+  return reflectCoords(coords)
+}
+
+reflectCoords(coords) {
   x := coords[1]
   y := coords[2]
-  if (vert == "D") {
+  if (down()) {
     y := -y
   }
-  if (horiz == "L") {
+  if (left()) {
     x := -x
   }
   return [x, y]
 }
 
-getAnalogCoords() {
+getAnalogCoordsWithR() {
   global
-  if (buttonUp and (mostRecentVertical == "U")) {
-    vert := "U"
-  } else if (buttonDown and (mostRecentVertical == "D")) {
-    vert := "D"
-  } else {
-    vert := ""
-  }
-
-  if (buttonLeft and (mostRecentHorizontal == "L")) {
-    horiz := "L"
-  } else if (buttonRight and (mostRecentHorizontal == "R")) {
-    horiz := "R"
-  } else {
-    horiz := ""
-  }
-
-  if (neither(buttonModX, buttonModY) or (buttonModX and buttonModY) or (buttonLeft and buttonRight)) {
-    modif := ""
-  } else if (buttonModX) {
-    modif := "X"
-  } else {
-    modif := "Y"
-  }
-
-  if (buttonR) {
-    coords := getAnalogCoordsWithR(vert, horiz, modif)
-  } else if (buttonL or buttonZ) {
-    coords := getAnalogCoordsWithLZ(vert, horiz, modif)
-  } else {
-    coords := getAnalogCoordsWithNoShield(vert, horiz, modif)
-  }
-
-  return reflectCoords(coords, vert, horiz)
-}
-
-getAnalogCoordsWithR(vert, horiz, modif) {
-  global
-  if (neither(vert, horiz)) {
+  if (neither(anyVert(), anyHoriz())) {
     return coordsOrigin
-  } else if (vert and horiz) {
-    switch modif {
-      case "X":
-        return vert == "U" ? coordsRShieldQuadrant12ModX : coordsRShieldQuadrant34ModX
-      case "Y":
-        return vert == "U" ? coordsRShieldQuadrant12ModY : coordsRShieldQuadrant34ModY
-      default:
-        return coordsRShieldQuadrant
+  } else if (anyVert() and anyHoriz()) {
+    if (modX()) {
+      return up() ? coordsRShieldQuadrant12ModX : coordsRShieldQuadrant34ModX
+    } else if (modY()) {
+      return up() ? coordsRShieldQuadrant12ModY : coordsRShieldQuadrant34ModY
+    } else {
+      return coordsRShieldQuadrant
     }
-  } else if (vert) {
+  } else if (anyVert()) {
     return coordsRShieldVertical
   } else {
     return coordsRShieldHorizontal
   }
 }
 
-getAnalogCoordsWithLZ(vert, horiz, modif) {
+getAnalogCoordsWithLZ() {
   global
-  if (neither(vert, horiz)) {
+  if (neither(anyVert(), anyHoriz())) {
     return coordsOrigin
-  } else if (vert and horiz) {
-    if (buttonZ and modif and not buttonL) {
-      ; Z + modifier + quadrant ddirection is an extended firefox angle (same direction, greater magnitude/tilt)
-      return modif == "X" ? coordsExtendedFirefoxModX : coordsExtendedFirefoxModY
+  } else if (anyVert() and anyHoriz()) {
+    if (buttonZ and anyMod() and not buttonL) {
+      ; Z + modifier + quadrant direction is an extended firefox angle (even without C)
+      return modX() ? coordsExtendedFirefoxModX : coordsExtendedFirefoxModY
     } else {
-      switch modif {
-        case "X":
-          return vert == "U" ? coordsLZShieldQuadrant12ModX : coordsLZShieldQuadrant34ModX
-        case "Y":
-          return vert == "U" ? coordsLZShieldQuadrant12ModY : coordsLZShieldQuadrant34ModY
-        default:
-          return vert == "U" ? coordsLZShieldQuadrant12 : coordsLZShieldQuadrant34
+      if (modX()) {
+        return up() ? coordsLZShieldQuadrant12ModX : coordsLZShieldQuadrant34ModX
+      } else if (modY()) {
+        return up() ? coordsLZShieldQuadrant12ModY : coordsLZShieldQuadrant34ModY
+      } else {
+        return up() ? coordsLZShieldQuadrant12 : coordsLZShieldQuadrant34
       }
     }
-  } else if (vert) {
+  } else if (anyVert()) {
     return coordsLZShieldVertical
   } else {
     return coordsLZShieldHorizontal
   }
 }
 
-getAnalogCoordsWithNoShield(vert, horiz, modif) {
+getAnalogCoordsWithNoShield() {
   global
-  if (neither(vert, horiz)) {
+  if (neither(anyVert(), anyHoriz())) {
     return coordsOrigin
-  } else if (vert and horiz) {
-    if (anyC() and (modif == "X" or modif == "Y")) {
-      return getAnalogCoordsFirefox(vert, horiz, modif)
+  } else if (anyVert() and anyHoriz()) {
+    if (anyC() and anyMod()) {
+      return getAnalogCoordsFirefox()
     } else {
-      switch modif {
-        case "X":
-          return coordsQuadrantModX
-        case "Y":
-          return coordsQuadrantModY
-        default:
-          return coordsQuadrant
+      if (modX()) {
+        return coordsQuadrantModX
+      } else if (modY()) {
+        return coordsQuadrantModY
+      } else {
+        return coordsQuadrant
       }
     }
-  } else if (vert) {
-    switch modif {
-      case "X":
-        return coordsVerticalModX
-      case "Y":
-        return coordsVerticalModY
-      default:
-        return coordsVertical
+  } else if (anyVert()) {
+    if (modX()) {
+      return coordsVerticalModX
+    } else if (modY()) {
+      return coordsVerticalModY
+    } else {
+      return coordsVertical
     }
   } else {
-    switch modif {
-      case "X":
-        return coordsHorizontalModX
-      case "Y":
-        return buttonB ? coordsHorizontal : coordsHorizontalModY ; turnaround side-b nerf
-      default:
-        return coordsHorizontal
+    if (modX()) {
+      return coordsHorizontalModX
+    } else if (modY()) {
+      return buttonB ? coordsHorizontal : coordsHorizontalModY ; turnaround side-b nerf
+    } else {
+      return coordsHorizontal
     }
   }
 }
 
-getAnalogCoordsFirefox(vert, horiz, modif) {
+getAnalogCoordsFirefox() {
   global
-  if (modif == "X") {
-    if (buttonCUp) { ; code doesn't allow multiple c button variables to be true at once
+  if (modX()) {
+    if (cUp()) {
       return buttonZ ? coordsExtendedFirefoxModXCUp : coordsFirefoxModXCUp
-    } else if (buttonCDown) {
+    } else if (cDown()) {
       return buttonZ ? coordsExtendedFirefoxModXCDown : coordsFirefoxModXCDown
-    } else if (buttonCLeft) {
+    } else if (cLeft()) {
       return buttonZ ? coordsExtendedFirefoxModXCLeft : coordsFirefoxModXCLeft
-    } else if (buttonCRight) {
+    } else if (cRight()) {
       return buttonZ ? coordsExtendedFirefoxModXCRight : coordsFirefoxModXCRight
     }
-  } else if (modif == "Y") {
-    if (buttonCUp) { ; code doesn't allow multiple c button variables to be true at once
+  } else if (modY()) {
+    if (cUp()) { ; code doesn't allow multiple c button variables to be true at once
       return buttonZ ? coordsExtendedFirefoxModYCUp : coordsFirefoxModYCUp
-    } else if (buttonCDown) {
+    } else if (cDown()) {
       return buttonZ ? coordsExtendedFirefoxModYCDown : coordsFirefoxModYCDown
-    } else if (buttonCLeft) {
+    } else if (cLeft()) {
       return buttonZ ? coordsExtendedFirefoxModYCLeft : coordsFirefoxModYCLeft
-    } else if (buttonCRight) {
+    } else if (cRight()) {
       return buttonZ ? coordsExtendedFirefoxModYCRight : coordsFirefoxModYCRight
     }
   }
@@ -323,25 +364,22 @@ setAnalogStick(coords) {
 
 getCStickCoords() {
   global
-
-  ; Unlike analog direction buttons, this script unsets any existing C button press
-  ; variables when a new C button is pressed, so only one is true at a time
-  if (buttonCUp) {
+  if (cUp()) {
     return [0, 1]
-  } else if (buttonCDown) {
+  } else if (cDown()) {
     return [0, -1]
-  } else if (buttonCLeft) {
-    if (buttonModX and buttonUp) {
+  } else if (cLeft()) {
+    if (modX() and up()) {
       return [-0.9, 0.5]
-    } else if (buttonModX and buttonDown) {
+    } else if (modX() and down()) {
       return [-0.9, -0.5]
     } else {
       return [-1, 0]
     }
-  } else if (buttonCRight) {
-    if (buttonModX and buttonUp) {
+  } else if (cRight()) {
+    if (modX() and up()) {
       return [0.9, 0.5]
-    } else if (buttonModX and buttonDown) {
+    } else if (modX() and down()) {
       return [0.9, -0.5]
     } else {
       return [1, 0]
@@ -359,19 +397,13 @@ setCStick(coords) {
 }
 
 ; Converts coordinates from melee values (-1 to 1) to vJoy values (0 to 32767).
-mx = 10271 ; Why this number? idk, I would have thought it should be 16384 * (80 / 128) = 10240, but this works
-my = -10271
-bx = 16448 ; 16384 + 64
-by = 16320 ; 16384 - 64
 convertCoords(coords) {
-  global
+  mx = 10271 ; Why this number? idk, I would have thought it should be 16384 * (80 / 128) = 10240, but this works
+  my = -10271
+  bx = 16448 ; 16384 + 64
+  by = 16320 ; 16384 - 64
   return [ mx * coords[1] + bx
          , my * coords[2] + by ]
-}
-
-anyC() {
-  global
-  return buttonCUp or buttonCDown or buttonCLeft or buttonCRight
 }
 
 neither(a, b) {
@@ -499,11 +531,13 @@ Label1:
   buttonUp := true
   mostRecentVertical := "U"
   updateAnalogStick()
+  updateCStick()
   return
 
 Label1_UP:
   buttonUp := false
   updateAnalogStick()
+  updateCStick()
   return
 
 ; Analog Down
@@ -511,11 +545,13 @@ Label2:
   buttonDown := true
   mostRecentVertical := "D"
   updateAnalogStick()
+  updateCStick()
   return
 
 Label2_UP:
   buttonDown := false
   updateAnalogStick()
+  updateCStick()
   return
 
 ; Analog Left
@@ -546,11 +582,13 @@ Label4_UP:
 Label5:
   buttonModX := true
   updateAnalogStick()
+  updateCStick()
   return
 
 Label5_UP:
   buttonModX := false
   updateAnalogStick()
+  updateCStick()
   return
 
 ; ModY
@@ -651,12 +689,12 @@ Label13_UP:
 
 ; C Up
 Label14:
-  clearC()
+  buttonCUp := true
   if (buttonModX and buttonModY) {
     ; Pressing ModX and ModY simultaneously changes C buttons to D pad
     myStick.SetBtn(1, 9)
   } else {
-    buttonCUp := true
+    mostRecentC := "U"
     updateCStick()
     updateAnalogStick()
   }
@@ -671,12 +709,12 @@ Label14_UP:
 
 ; C Down
 Label15:
-  clearC()
+  buttonCDown := true
   if (buttonModX and buttonModY) {
     ; Pressing ModX and ModY simultaneously changes C buttons to D pad
     myStick.SetBtn(1, 11)
   } else {
-    buttonCDown := true
+    mostRecentC := "D"
     updateCStick()
     updateAnalogStick()
   }
@@ -691,12 +729,12 @@ Label15_UP:
 
 ; C Left
 Label16:
-  clearC()
+  buttonCLeft := true
   if (buttonModX and buttonModY) {
     ; Pressing ModX and ModY simultaneously changes C buttons to D pad
     myStick.SetBtn(1, 10)
   } else {
-    buttonCLeft := true
+    mostRecentC := "L"
     updateCStick()
     updateAnalogStick()
   }
@@ -711,12 +749,12 @@ Label16_UP:
 
 ; C Right
 Label17:
-  clearC()
+  buttonCRight := true
+  mostRecentC := "R"
   if (buttonModX and buttonModY) {
     ; Pressing ModX and ModY simultaneously changes C buttons to D pad
     myStick.SetBtn(1, 12)
   } else {
-    buttonCRight := true
     updateCStick()
     updateAnalogStick()
   }
@@ -801,9 +839,3 @@ Label23:
 Label23_UP:
   return
 
-clearC() {
-  buttonCUp := false
-  buttonCDown := false
-  buttonCLeft := false
-  buttonCRight := false
-}
