@@ -21,9 +21,9 @@ I am unaffiliated with the creators/producers of the B0XX.
 6. (Optional - for development) AHK-CvJoyInterface: a library for linking Autohotkey and vJoy. Download CvJoyInterface.ahk from https://github.com/evilC/AHK-CvJoyInterface and place it inside the Lib folder where you installed Autohotkey (for me C:\Program Files\AutoHotkey\Lib). You may have to create the Lib folder if it is not already there. 
 
 # Setup
-1. Place the b0xx.ini file inside the Dolphin-Installation-Folder\User\Config\Profiles\GCPad folder (create the Profiles/GCPad folder if it does not already exist. If you're using SmashLadder Dolphin Launcher your Dolphin instances maybe installed to C:\Users\Your-Username\AppData\Roaming\SmashLadder Dolphin Launcher\dolphin_downloads). Renaming b0xx.ini to avoid conflict with other B0XX-Dolphin interfaces in that folder is fine.
+1. Place the b0xx-keyboard.ini file inside the \<YourDolphinInstallation\>\User\Config\Profiles\GCPad folder (create any folders that do not already exist. If you're using SmashLadder Dolphin Launcher, your Dolphin instances may be installed to C:\Users\Your-Username\AppData\Roaming\SmashLadder Dolphin Launcher\dolphin_downloads).
 2. In Dolphin, open up controller config. Set player 1 to a standard controller, then hit configure. Under profile, select b0xx and hit load. After, set device to vJoy. Then hit OK.
-3. Run b0xx.exe. Make sure the hotkeys.ini and parameters.ini files are in the same directory.
+3. Run b0xx.exe. Make sure the hotkeys.ini file is in the same directory.
 
 # Configuration
 
