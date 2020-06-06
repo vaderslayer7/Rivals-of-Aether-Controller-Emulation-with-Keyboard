@@ -97,6 +97,8 @@ mostRecentHorizontal := ""
 
 mostRecentC := ""
 
+simultaneousHorizontalModifierLockout := false
+
 ; b0xx constants
 coordsOrigin := [0, 0]
 coordsVertical := [0, 1]
@@ -193,12 +195,12 @@ modX() {
   ; deactivate if either:
   ;   - modY is also held
   ;   - both left and right are held while neither up or down is active
-  return buttonModX and not buttonModY and not (buttonLeft and buttonRight and not anyVert()) 
+  return buttonModX and not buttonModY and not (simultaneousHorizontalModifierLockout and not anyVert()) 
 }
 
 modY() {
   global
-  return buttonModY and not buttonModX and not (buttonLeft and buttonRight and not anyVert())
+  return buttonModY and not buttonModX and not (simultaneousHorizontalModifierLockout and not anyVert())
 }
 
 anyVert() {
@@ -561,11 +563,15 @@ Label2_UP:
 Label3:
   buttonLeft := true
   mostRecentHorizontal := "L"
+  if (buttonRight) {
+    simultaneousHorizontalModifierLockout := true
+  }
   updateAnalogStick()
   return
 
 Label3_UP:
   buttonLeft := false
+  simultaneousHorizontalModifierLockout := false
   updateAnalogStick()
   return
 
@@ -573,23 +579,29 @@ Label3_UP:
 Label4:
   buttonRight := true
   mostRecentHorizontal := "R"
+  if (buttonLeft) {
+    simultaneousHorizontalModifierLockout := true
+  }
   updateAnalogStick()
   return
 
 Label4_UP:
   buttonRight := false
+  simultaneousHorizontalModifierLockout := false
   updateAnalogStick()
   return
 
 ; ModX
 Label5:
   buttonModX := true
+  simultaneousHorizontalModifierLockout := false ; Lockout is order dependant, only applies if modifier isn't pressed after horizontals
   updateAnalogStick()
   updateCStick()
   return
 
 Label5_UP:
   buttonModX := false
+  simultaneousHorizontalModifierLockout := false
   updateAnalogStick()
   updateCStick()
   return
