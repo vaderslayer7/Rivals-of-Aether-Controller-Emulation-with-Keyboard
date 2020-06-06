@@ -16,7 +16,7 @@ I am unaffiliated with the creators/producers of the B0XX.
 1. Windows. Autohotkey only works on Windows. This script was tested on Windows 10.
 2. Faster Melee 5.9F. Other Dolphin versions may work but have not been tested.
 3. A keyboard with high n-key rollover. This is how many keys can be pressed at the same time without errors. Most gaming and mechanical keyboards will allow at least 6 keys which should be enough for every advanced technique. Note that some non-gaming keyboards might allow large numbers of simultaneous key presses for only some combinations of keys - use something like www.keyboardchecker.com to check yours.
-4. vJoy: A joystick emulator. Download and install from https://sourceforge.net/projects/vjoystick/?source=typ_redirect. After installing, run "Configure vJoy" (can be found by searching in the start menu). Set the number of buttons to 12 and hit apply.
+4. vJoy: A joystick emulator. Download and install from https://sourceforge.net/projects/vjoystick/?source=typ_redirect. After installing, run "Configure vJoy" (can be found by searching in the start menu). Set the number of buttons to 16 and hit apply.
 5. (Optional - for development) Autohotkey. This is a scripting language for remapping keyboard keys. Download the installer at https://autohotkey.com/.
 6. (Optional - for development) AHK-CvJoyInterface: a library for linking Autohotkey and vJoy. Download CvJoyInterface.ahk from https://github.com/evilC/AHK-CvJoyInterface and place it inside the Lib folder where you installed Autohotkey (for me C:\Program Files\AutoHotkey\Lib). You may have to create the Lib folder if it is not already there. 
 
