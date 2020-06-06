@@ -95,7 +95,8 @@ buttonCRight := false
 mostRecentVertical := ""
 mostRecentHorizontal := ""
 
-mostRecentC := ""
+mostRecentVerticalC := ""
+mostRecentHorizontalC := ""
 
 simultaneousHorizontalModifierLockout := false
 
@@ -172,29 +173,29 @@ right() {
 
 cUp() {
   global
-  return buttonCUp and mostRecentC == "U"
+  return buttonCUp and mostRecentVerticalC == "U"
 }
 
 cDown() {
   global
-  return buttonCDown and mostRecentC == "D"
+  return buttonCDown and mostRecentVerticalC == "D"
 }
 
 cLeft() {
   global
-  return buttonCLeft and mostRecentC == "L"
+  return buttonCLeft and mostRecentHorizontalC == "L"
 }
 
 cRight() {
   global
-  return buttonCRight and mostRecentC == "R"
+  return buttonCRight and mostRecentHorizontalC == "R"
 }
 
 modX() {
   global
   ; deactivate if either:
   ;   - modY is also held
-  ;   - both left and right are held while neither up or down is active
+  ;   - both left and right are held (and were pressed after modX) while neither up or down is active (
   return buttonModX and not buttonModY and not (simultaneousHorizontalModifierLockout and not anyVert()) 
 }
 
@@ -216,6 +217,16 @@ anyHoriz() {
 anyMod() {
   global
   return modX() or modY()
+}
+
+anyVertC() {
+  global
+  return cUp() or cDown()
+}
+
+anyHorizC() {
+  global
+  return cLeft() or cRight()
 }
 
 anyC() {
@@ -369,29 +380,35 @@ setAnalogStick(coords) {
 
 getCStickCoords() {
   global
-  if (cUp()) {
-    return [0, 1]
-  } else if (cDown()) {
-    return [0, -1]
-  } else if (cLeft()) {
-    if (modX() and up()) {
-      return [-0.9, 0.5]
-    } else if (modX() and down()) {
-      return [-0.9, -0.5]
-    } else {
-      return [-1, 0]
-    }
-  } else if (cRight()) {
-    if (modX() and up()) {
-      return [0.9, 0.5]
-    } else if (modX() and down()) {
-      return [0.9, -0.5]
-    } else {
-      return [1, 0]
-    }
+  if (neither(anyVertC(), anyHorizC())) {
+    coords := [0, 0]
+  } else if (anyVertC() and anyHorizC()) {
+    coords := [0.7, 0.7]
+  } else if (anyVertC()) {
+      coords := [0, 1]
   } else {
-    return [0, 0]
+    if (modX() and up()) {
+      coords := [0.9, 0.5]
+    } else if (modX() and down()) {
+      coords := [0.9, -0.5]
+    } else {
+      coords := [1, 0]
+    }
   }
+
+  return reflectCStickCoords(coords)
+}
+
+reflectCStickCoords(coords) {
+  x := coords[1]
+  y := coords[2]
+  if (cDown()) {
+    y := -y
+  }
+  if (cLeft()) {
+    x := -x
+  }
+  return [x, y]
 }
 
 setCStick(coords) {
@@ -709,7 +726,7 @@ Label14:
     ; Pressing ModX and ModY simultaneously changes C buttons to D pad
     myStick.SetBtn(1, 9)
   } else {
-    mostRecentC := "U"
+    mostRecentVerticalC := "U"
     updateCStick()
     updateAnalogStick()
   }
@@ -729,7 +746,7 @@ Label15:
     ; Pressing ModX and ModY simultaneously changes C buttons to D pad
     myStick.SetBtn(1, 11)
   } else {
-    mostRecentC := "D"
+    mostRecentVerticalC := "D"
     updateCStick()
     updateAnalogStick()
   }
@@ -749,7 +766,7 @@ Label16:
     ; Pressing ModX and ModY simultaneously changes C buttons to D pad
     myStick.SetBtn(1, 10)
   } else {
-    mostRecentC := "L"
+    mostRecentHorizontalC := "L"
     updateCStick()
     updateAnalogStick()
   }
@@ -765,11 +782,11 @@ Label16_UP:
 ; C Right
 Label17:
   buttonCRight := true
-  mostRecentC := "R"
   if (buttonModX and buttonModY) {
     ; Pressing ModX and ModY simultaneously changes C buttons to D pad
     myStick.SetBtn(1, 12)
   } else {
+    mostRecentHorizontalC := "R"
     updateCStick()
     updateAnalogStick()
   }
