@@ -29,6 +29,8 @@ I am unaffiliated with the creators/producers of the B0XX.
 
 The Autohotkey script can be configured to change the keybindings. Open the GUI by finding the Autohotkey script in the task bar hidden icons (lil ^ icon in lower right -> green H icon (left click, or right click -> "Edit Controls")). Alternatively they can be edited by modifying the hotkeys.ini file directly. Changes made in the GUI are automatically saved to the appropriate files and reflected in real time.
 
+The GUI can be used to disable the default behavior of any of the keys used. This is highly recommended for any metakeys or other keys with Windows functionality (Shift, Ctrl, Tab, Esc, etc).
+
 # Default Controls
 * W/E/R: Left/Down/Right
 * [: Up
@@ -46,11 +48,19 @@ The Autohotkey script can be configured to change the keybindings. Open the GUI 
 
 # Troubleshooting
 
-## A Specific Technique Doesn't Work
+## Controller behavior is unexpected, or a specific technique doesn't work
 * Use www.keyboardchecker.com to make sure all of the required keyboard inputs can be recorded simultaneously on your keyboard.
+* Make sure any keys like Shift, Control, Tab, etc have their default behavior disabled in the GUI.
 * Try restarting the Autohotkey script.
-* Add a "debug" hotkey, hold down the keys related to you technique, and press debug. The dialog box that appears will tell you whether the script is actually seeing all of your button presses.
+* In 20XX (or similar), enter debug mode (Start + D-Pad right twice) and turn on controller display (Y + D-Pad left) and analog stick coordinate display (X + D-Pad right, purple numbers). Check whether the expected inputs are being passed from Autohotkey to Melee.
+* Use the GUI to add a "debug" hotkey, hold down the keys related to you technique, and press debug. The dialog box that appears will tell you whether the script is actually seeing all of your button presses.
 * Hmu (TuberLuber on Discord/Reddit) or file an issue on Github.
+
+## Holding left and right continuously causes the character to dashdance, or up and down causes the character to repeatedly jump/fastfall
+This is an issue with your keyboard or keyboard driver, Autohotkey will only update controller inputs when a key is first held or released.
+
+## Holding C-Left and pressing C-Right should cause a rightward smash/aerial, but it doesn't
+This looks like it might be a glitch in melee itself. Check out: https://imgur.com/a/Tf3eKJQ
 
 # Development Info
 
