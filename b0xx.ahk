@@ -112,21 +112,19 @@ coordsQuadrant := [0.7, 0.7]
 coordsQuadrantModX := [0.7375, 0.2875]
 coordsQuadrantModY := [0.2875, 0.7375]
 
-coordsRShieldVertical := [0, 0.5375] ; TODO - find out how/if ModX and ModY affect cardinal directions
+coordsRShieldVertical := [0, 0.5375]
 coordsRShieldHorizontal := [0.6375, 0]
 coordsRShieldQuadrant := [0.5375, 0.5375]
-coordsRShieldQuadrant12ModX := coordsRShieldQuadrant ; TODO - verify that modifiers have no affect on upward quadrant angles with R
-coordsRShieldQuadrant12ModY := coordsRShieldQuadrant
-coordsRShieldQuadrant34ModX := [0.6375, 0.375]
+coordsRShieldQuadrantModX := [0.6375, 0.375]
+coordsRShieldQuadrant12ModY := [0.4750, 0.8750]
 coordsRShieldQuadrant34ModY := [0.5, 0.85]
 
 coordsLZShieldVertical := coordsVertical
 coordsLZShieldHorizontal := coordsHorizontal
-coordsLZShieldQuadrant12 := coordsQuadrant
-coordsLZShieldQuadrant12ModX := coordsQuadrantModX
-coordsLZShieldQuadrant12ModY := coordsQuadrantModY
+coordsLZShieldQuadrant12 := coordsRShieldQuadrant
 coordsLZShieldQuadrant34 := [0.7125, 0.6875]
-coordsLZShieldQuadrant34ModX := coordsRShieldQuadrant34ModX
+coordsLZShieldQuadrantModX := coordsRShieldQuadrantModX
+coordsLZShieldQuadrant12ModY := coordsRShieldQuadrant12ModY
 coordsLZShieldQuadrant34ModY := coordsRShieldQuadrant34ModY
 
 coordsFirefoxModXCDown := [0.6125, 0.3000]  ; ~26 deg
@@ -274,7 +272,7 @@ getAnalogCoordsWithR() {
     return coordsOrigin
   } else if (anyVert() and anyHoriz()) {
     if (modX()) {
-      return up() ? coordsRShieldQuadrant12ModX : coordsRShieldQuadrant34ModX
+      return coordsRShieldQuadrantModX
     } else if (modY()) {
       return up() ? coordsRShieldQuadrant12ModY : coordsRShieldQuadrant34ModY
     } else {
@@ -297,7 +295,7 @@ getAnalogCoordsWithLZ() {
       return modX() ? coordsExtendedFirefoxModX : coordsExtendedFirefoxModY
     } else {
       if (modX()) {
-        return up() ? coordsLZShieldQuadrant12ModX : coordsLZShieldQuadrant34ModX
+        return coordsLZShieldQuadrantModX
       } else if (modY()) {
         return up() ? coordsLZShieldQuadrant12ModY : coordsLZShieldQuadrant34ModY
       } else {
