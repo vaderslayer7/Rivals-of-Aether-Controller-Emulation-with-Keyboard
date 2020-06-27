@@ -13,16 +13,16 @@ The B0XX functionality provided is currently *incomplete*. Missing behavior incl
 I am unaffiliated with the creators/producers of the B0XX. 
 
 # Requirments
-1. Windows. Autohotkey only works on Windows. This script was tested on Windows 10.
-2. Faster Melee 5.9F. Other Dolphin versions may work but have not been tested.
-3. A keyboard with high n-key rollover. This is how many keys can be pressed at the same time without errors. Most gaming and mechanical keyboards will allow at least 6 keys which should be enough for every advanced technique. Note that some non-gaming keyboards might allow large numbers of simultaneous key presses for only some combinations of keys - use something like www.keyboardchecker.com to check yours.
+1. Windows. Autohotkey does not run on other platforms unfortunately. This script has been tested on Windows 10.
+2. Dolphin. Slippi 2.0.1+ and Faster Melee 5.9F have been tested, other Dolphin versions probably work as well.
+3. A keyboard with high n-key rollover. This is how many keys can be pressed at the same time without errors. Most gaming and mechanical keyboards will allow at least 6 keys which should be enough for every advanced technique. Note that some non-gaming keyboards might allow a large number of simultaneous key presses for only some combinations of keys. Use something like www.keyboardchecker.com to check the behavior of yours.
 4. vJoy: A joystick emulator. Download and install from https://sourceforge.net/projects/vjoystick/?source=typ_redirect. After installing, run "Configure vJoy" (can be found by searching in the start menu). Set the number of buttons to 16 and hit apply.
 5. (Optional - for development) Autohotkey. This is a scripting language for remapping keyboard keys. Download the installer at https://autohotkey.com/.
 6. (Optional - for development) AHK-CvJoyInterface: a library for linking Autohotkey and vJoy. Download CvJoyInterface.ahk from https://github.com/evilC/AHK-CvJoyInterface and place it inside the Lib folder where you installed Autohotkey (for me C:\Program Files\AutoHotkey\Lib). You may have to create the Lib folder if it is not already there. 
 
 # Setup
 1. Place the b0xx-keyboard.ini file inside the \<YourDolphinInstallation\>\User\Config\Profiles\GCPad folder (create any folders that do not already exist. If you're using SmashLadder Dolphin Launcher, your Dolphin instances may be installed to C:\Users\Your-Username\AppData\Roaming\SmashLadder Dolphin Launcher\dolphin_downloads).
-2. In Dolphin, open up controller config. Set player 1 to a standard controller, then hit configure. Under profile, select b0xx and hit load. After, set device to vJoy. Then hit OK.
+2. In Dolphin, open up controller config. Set player 1 to Standard Controller, then hit configure. Under Profile, select b0xx-keyboard and hit load. Verify that Device is set to DInput/0/vJoy. Hit OK.
 3. Run b0xx.exe. Make sure the hotkeys.ini file is in the same directory.
 
 # Configuration
@@ -64,4 +64,4 @@ This looks like it might be a glitch in melee itself. Check out: https://imgur.c
 
 # Development Info
 
-b0xx.exe is a compiled version of the b0xx.ahk file with the vjoy autohotkey library in as well. If you want to make changes to the script, edit the b0xx.ahk file and run it directly. Compile a new version of b0xx.exe by right clicking b0xx.ahk and clicking "Compile Script."
+After making changes to b0xx.ahk, recompile b0xx.exe by right-clicking b0xx.ahk and selecting "Compile Script." This requires Autohotkey to be installed.
