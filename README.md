@@ -1,8 +1,8 @@
 # B0XX-AHK
 
-This is an Autohotkey script that lets you set up your keyboard to act like the B0XX in Dolphin. It is an adaptation of a [similar script](github.com/tlandegger/smashbox-AHK) for simulating Smashbox on Dolphin created by tlandegger.
+This is an Autohotkey script emulating B0XX behavior through a keyboard within Dolphin. It is an adaptation of a [similar script](github.com/tlandegger/smashbox-AHK) for Smashbox on Dolphin created by tlandegger.
 
-The script uses Autohotkey to read keyboard inputs and convert them to inputs to a virtual joystick called vJoy, which is used as a controller by Dolphin.
+The script uses Autohotkey to read keyboard inputs and convert them to a virtual joystick called vJoy, which is used as a controller by Dolphin.
 
 The B0XX functionality provided is currently *incomplete*. Missing behavior includes:
 
@@ -12,17 +12,17 @@ The B0XX functionality provided is currently *incomplete*. Missing behavior incl
 
 I am unaffiliated with the creators/producers of the B0XX. 
 
-# Requirments
+# Requirements
 1. Windows. Autohotkey does not run on other platforms unfortunately. This script has been tested on Windows 10.
-2. Dolphin. Slippi 2.0.1+ and Faster Melee 5.9F have been tested, other Dolphin versions probably work as well.
-3. A keyboard with high n-key rollover. This is how many keys can be pressed at the same time without errors. Most gaming and mechanical keyboards will allow at least 6 keys which should be enough for every advanced technique. Note that some non-gaming keyboards might allow a large number of simultaneous key presses for only some combinations of keys. Use something like www.keyboardchecker.com to check the behavior of yours.
-4. vJoy: A joystick emulator. Download and install from https://sourceforge.net/projects/vjoystick/?source=typ_redirect. After installing, run "Configure vJoy" (can be found by searching in the start menu). Set the number of buttons to 16 and hit apply.
-5. (Optional - for development) Autohotkey. This is a scripting language for remapping keyboard keys. Download the installer at https://autohotkey.com/.
-6. (Optional - for development) AHK-CvJoyInterface: a library for linking Autohotkey and vJoy. Download CvJoyInterface.ahk from https://github.com/evilC/AHK-CvJoyInterface and place it inside the Lib folder where you installed Autohotkey (for me C:\Program Files\AutoHotkey\Lib). You may have to create the Lib folder if it is not already there. 
+2. A keyboard with high n-key rollover. This is how many keys can be pressed at the same time without errors. Most gaming and mechanical keyboards will allow at least 6 keys which should be enough for every advanced technique. Note that some non-gaming keyboards might allow a large number of simultaneous key presses for only some combinations of keys. Use something like www.keyboardchecker.com to check the behavior of yours.
+3. Dolphin. Slippi 2.0.3+ and Faster Melee 5.9F have been tested, other Dolphin versions probably work as well.
+4. vJoy. A joystick emulator. Download and install from https://sourceforge.net/projects/vjoystick/?source=typ_redirect. After installing, run "Configure vJoy" (can be found by searching in the start menu). Set the number of buttons to 16 and hit apply.
+5. (Optional - for development) Autohotkey. This is a scripting language for creating keybindings. Download the installer at https://autohotkey.com/.
+6. (Optional - for development) AHK-CvJoyInterface: a library for linking Autohotkey and vJoy. Download CvJoyInterface.ahk from https://github.com/evilC/AHK-CvJoyInterface and place it inside Autohotkey's Lib folder (for me this was located at C:\Program Files\AutoHotkey\Lib). You may have to create the Lib folder if it does not already exist. 
 
 # Setup
 1. Place the b0xx-keyboard.ini file inside the \<YourDolphinInstallation\>\User\Config\Profiles\GCPad folder (create any folders that do not already exist. If you're using SmashLadder Dolphin Launcher, your Dolphin instances may be installed to C:\Users\Your-Username\AppData\Roaming\SmashLadder Dolphin Launcher\dolphin_downloads).
-2. In Dolphin, open up controller config. Set player 1 to Standard Controller, then hit configure. Under Profile, select b0xx-keyboard and hit load. Verify that Device is set to DInput/0/vJoy. Hit OK.
+2. In Dolphin, open up the controller config. Set player 1 to Standard Controller, then hit configure. Under Profile, select b0xx-keyboard and hit load. Verify that Device is set to DInput/0/vJoy. Hit OK.
 3. Run b0xx.exe. Make sure the hotkeys.ini file is in the same directory.
 
 # Configuration
