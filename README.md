@@ -1,6 +1,6 @@
 # B0XX-AHK
 
-This is an Autohotkey script emulating B0XX behavior through a keyboard within Dolphin. It is an adaptation of a [similar script](github.com/tlandegger/smashbox-AHK) for Smashbox on Dolphin created by tlandegger.
+This is an Autohotkey script emulating B0XX behavior through a keyboard within Dolphin. It is an adaptation of a [similar script](https://github.com/tlandegger/smashbox-AHK) for Smashbox on Dolphin created by tlandegger.
 
 The script uses Autohotkey to read keyboard inputs and convert them to a virtual joystick called vJoy, which is used as a controller by Dolphin.
 
@@ -16,7 +16,7 @@ I am unaffiliated with the creators/producers of the B0XX.
 1. Windows. Autohotkey does not run on other platforms unfortunately. This script has been tested on Windows 10.
 2. A keyboard with high n-key rollover. This is how many keys can be pressed at the same time without errors. Most gaming and mechanical keyboards will allow at least 6 keys which should be enough for every advanced technique. Note that some non-gaming keyboards might allow a large number of simultaneous key presses for only some combinations of keys. Use something like www.keyboardchecker.com to check the behavior of yours.
 3. Dolphin. Slippi 2.0.3+ and Faster Melee 5.9F have been tested, other Dolphin versions probably work as well.
-4. vJoy. A joystick emulator. Download and install from https://sourceforge.net/projects/vjoystick/?source=typ_redirect. After installing, run "Configure vJoy" (can be found by searching in the start menu). Set the number of buttons to 16 and hit apply.
+4. vJoy. A joystick emulator. Download and install from https://sourceforge.net/projects/vjoystick/?source=typ_redirect. After installing, run "Configure vJoy" (can be found by searching in the start menu). Set the number of buttons to 12 and hit apply.
 5. (Optional - for development) Autohotkey. This is a scripting language for creating keybindings. Download the installer at https://autohotkey.com/.
 6. (Optional - for development) AHK-CvJoyInterface: a library for linking Autohotkey and vJoy. Download CvJoyInterface.ahk from https://github.com/evilC/AHK-CvJoyInterface and place it inside Autohotkey's Lib folder (for me this was located at C:\Program Files\AutoHotkey\Lib). You may have to create the Lib folder if it does not already exist. 
 
@@ -32,19 +32,10 @@ The Autohotkey script can be configured to change the keybindings. Open the GUI 
 The GUI can be used to disable the default behavior of any of the keys used. This is highly recommended for any metakeys or other keys with Windows functionality (Shift, Ctrl, Tab, Esc, etc).
 
 # Default Controls
-* W/E/R: Left/Down/Right
-* [: Up
-* C/V: ModX/ModY
-* Q: L
-* 7: R
-* O/9: X/Y
-* P: Z
-* M: A
-* I: B
-* K/Space/N/,: C Up/Down/Left/Right
-* Arrow Keys: D-Pad (for convenience. D-Pad is also available via ModX + ModY + C as on an actual B0XX)
-* 6: Start
-* Pause / Ctrl-Alt-S: Pause or unpause the Autohotkey script
+
+The [default layout](https://github.com/agirardeau/b0xx-ahk/blob/master/default-layout.jpg) is chosen to avoid keys that would interfere with normal computer usage (control, tab, enter, etc) or are not present on all keyboards (numpad, F-keys), as well as to work passably on some keyboards with poor n-key rollover properties. Making use of those keys, as well as taking into account the characteristics of your particular hands and keyboard, will probably allow you to find a better layout for yourself. Some community-sourced suggestions are provided [here](https://github.com/agirardeau/b0xx-ahk/blob/master/suggested-layouts.png).
+
+Ctrl-Alt-S pauses and unpauses the Autohotkey script.
 
 # Troubleshooting
 
