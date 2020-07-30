@@ -6,9 +6,8 @@ The script uses Autohotkey to read keyboard inputs and convert them to a virtual
 
 The B0XX functionality provided is currently *incomplete*. Missing behavior includes:
 
-* SDI nerf
 * Pivot utilt/angled ftilt nerf
-* B0XX r2 lightshield buttons
+* SDI nerf
 
 I am unaffiliated with the creators/producers of the B0XX. 
 
