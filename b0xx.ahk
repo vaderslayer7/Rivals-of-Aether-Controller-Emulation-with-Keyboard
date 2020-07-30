@@ -3,29 +3,31 @@
 #include <CvJoyInterface>
 SetBatchLines, -1
 
-hotkeys := [ "Analog Up"
-           , "Analog Down"
-           , "Analog Left"
-           , "Analog Right"
-           , "ModX"
-           , "ModY"
-           , "A"
-           , "B"
-           , "L"
-           , "R"
-           , "X"
-           , "Y"
-           , "Z"
-           , "C-stick Up"
-           , "C-stick Down"
-           , "C-stick Left"
-           , "C-stick Right"
-           , "Start"
-           , "D-pad Up"
-           , "D-pad Down"
-           , "D-pad Left"
-           , "D-pad Right"
-           , "Debug"]
+hotkeys := [ "Analog Up"             ; 1
+           , "Analog Down"           ; 2
+           , "Analog Left"           ; 3
+           , "Analog Right"          ; 4
+           , "ModX"                  ; 5
+           , "ModY"                  ; 6
+           , "A"                     ; 7
+           , "B"                     ; 8
+           , "L"                     ; 9
+           , "R"                     ; 10
+           , "X"                     ; 11
+           , "Y"                     ; 12
+           , "Z"                     ; 13
+           , "C-stick Up"            ; 14
+           , "C-stick Down"          ; 15
+           , "C-stick Left"          ; 16
+           , "C-stick Right"         ; 17
+           , "Lightshield (Light)"   ; 18
+           , "Lightshield (Medium)"  ; 19
+           , "Start"                 ; 20
+           , "D-pad Up"              ; 21
+           , "D-pad Down"            ; 22
+           , "D-pad Left"            ; 23
+           , "D-pad Right"           ; 24
+           , "Debug"]                ; 25
 
 Menu, Tray, Click, 1
 Menu, Tray, Add, Edit Controls, ShowGui
@@ -83,6 +85,9 @@ buttonR := false
 buttonX := false
 buttonY := false
 buttonZ := false
+
+buttonLSL := false
+buttonLSM := false
 
 buttonModX := false
 buttonModY := false
@@ -245,7 +250,7 @@ getAnalogCoords() {
   global
   if (buttonR) {
     coords := getAnalogCoordsWithR()
-  } else if (buttonL or buttonZ) {
+  } else if (buttonL or buttonZ or buttonLSL or buttonLSM) {
     coords := getAnalogCoordsWithLZ()
   } else {
     coords := getAnalogCoordsWithNoShield()
@@ -424,6 +429,42 @@ convertCoords(coords) {
   by = 16320 ; 16384 - 64
   return [ mx * coords[1] + bx
          , my * coords[2] + by ]
+}
+
+setAnalogR(value) {
+  global
+  ;convertedValue := 10271 * (1 + (value - 43) / (140 - 43) )
+  ;convertedValue := 16384 * (1 + (value  / 140))
+  convertedValue := 16384 * (1 + (value  / 255))
+  ;convertedValue := value - 42
+  ;convertedValue := vJoyInterface.PercentTovJoy(value)
+  debugFormatString = 
+  (
+    Analog R value: {1} => {2}
+  )
+  debugString := Format(debugFormatString, value, convertedValue)
+  ;Msgbox % debugString
+  ;Traytip
+  ;Traytip, Set axis 3, To: %convertedValue%
+  myStick.SetAxisByIndex(convertedValue, 3)
+  ;Msgbox Setting axis 3 to 19333.12
+  ;myStick.SetAxisByIndex(19333.12000, 3)
+  ;myStick.SetAxisByIndex(32000, 3)
+  ;Msgbox 32000
+  ;myStick.SetAxisByIndex(49, 3)
+  ;Msgbox 49
+  ;myStick.SetAxisByIndex(11000, 3)
+  ;Msgbox 11000
+  ;myStick.SetAxisByIndex(20000, 3)
+  ;Msgbox 20000
+  ;myStick.SetAxisByIndex(0.4, 3)
+  ;Msgbox 0.4
+  ;myStick.SetAxisByIndex(0.95, 3)
+  ;Msgbox 0.95
+  ;myStick.SetAxisByIndex(1.3, 3)
+  ;Msgbox 1.3
+  ;myStick.SetAxisByIndex(-10000, 3)
+  ;Msgbox -10000
 }
 
 neither(a, b) {
@@ -797,53 +838,75 @@ Label17_UP:
   updateAnalogStick()
   return
 
-; Start
+; Lightshield (Light)
 Label18:
-  myStick.SetBtn(1, 8)
+  buttonLSL = true
+  setAnalogR(49)
   return
 
 Label18_UP:
+  buttonLSL = false
+  setAnalogR(0)
+  return
+
+; Lightshield (Medium)
+Label19:
+  buttonLSM = true
+  setAnalogR(94)
+  return
+
+Label19_UP:
+  buttonLSM = false
+  setAnalogR(0)
+  return
+
+; Start
+Label20:
+  myStick.SetBtn(1, 8)
+  return
+
+Label20_UP:
   myStick.SetBtn(0, 8)
   return
 
 ; D Up
-Label19:
+Label21:
   myStick.SetBtn(1, 9)
   return
 
-Label19_UP:
+Label21_UP:
   myStick.SetBtn(0, 9)
   return
 
 ; D Down
-Label20:
+Label22:
   myStick.SetBtn(1, 11)
   return
 
-Label20_UP:
+Label22_UP:
   myStick.SetBtn(0, 11)
   return
 
 ; D Left
-Label21:
+Label23:
   myStick.SetBtn(1, 10)
   return
 
-Label21_UP:
+Label23_UP:
   myStick.SetBtn(0, 10)
   return
 
 ; D Right
-Label22:
+Label24:
   myStick.SetBtn(1, 12)
   return
 
-Label22_UP:
+Label24_UP:
   myStick.SetBtn(0, 12)
   return
 
 ; Debug
-Label23:
+Label25:
   debugFormatString = 
   (
     Analog Stick Coordinates: [{1}, {2}] ([{3}, {4}])
@@ -866,6 +929,6 @@ Label23:
     , buttonCUp, buttonCDown, buttonCLeft, buttonCRight)
   Msgbox % debugString
 
-Label23_UP:
+Label25_UP:
   return
 
