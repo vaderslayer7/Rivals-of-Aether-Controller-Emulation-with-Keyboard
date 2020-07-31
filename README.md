@@ -31,7 +31,7 @@ The GUI can be used to disable the default behavior of any of the keys used. Thi
 
 # Default Controls
 
-The [default layout](https://github.com/agirardeau/b0xx-ahk/blob/master/default-layout.jpg) is chosen to avoid keys that would interfere with normal computer usage (control, tab, enter, etc) or are not present on all keyboards (numpad, F-keys), as well as to work passably on some keyboards with poor n-key rollover properties. Making use of those keys, as well as taking into account the characteristics of your particular hands and keyboard, will probably allow you to find a better layout for yourself. Some community-sourced suggestions are provided [here](https://github.com/agirardeau/b0xx-ahk/blob/master/suggested-layouts.png).
+The [default layout](https://raw.githubusercontent.com/agirardeau/b0xx-ahk/master/default-layout.jpg) is chosen to avoid keys that would interfere with normal computer usage (control, tab, enter, etc) or are not present on all keyboards (numpad, F-keys), as well as to work passably on some keyboards with poor n-key rollover properties. Making use of those keys, as well as taking into account the characteristics of your particular hands and keyboard, will probably allow you to find a better layout for yourself. Some community-sourced suggestions are provided [here](https://raw.githubusercontent.com/agirardeau/b0xx-ahk/master/suggested-layouts.png).
 
 Ctrl-Alt-S pauses and unpauses the Autohotkey script.
 
