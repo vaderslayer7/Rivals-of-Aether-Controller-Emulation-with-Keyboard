@@ -433,38 +433,8 @@ convertCoords(coords) {
 
 setAnalogR(value) {
   global
-  ;convertedValue := 10271 * (1 + (value - 43) / (140 - 43) )
-  ;convertedValue := 16384 * (1 + (value  / 140))
   convertedValue := 16384 * (1 + (value  / 255))
-  ;convertedValue := value - 42
-  ;convertedValue := vJoyInterface.PercentTovJoy(value)
-  debugFormatString = 
-  (
-    Analog R value: {1} => {2}
-  )
-  debugString := Format(debugFormatString, value, convertedValue)
-  ;Msgbox % debugString
-  ;Traytip
-  ;Traytip, Set axis 3, To: %convertedValue%
   myStick.SetAxisByIndex(convertedValue, 3)
-  ;Msgbox Setting axis 3 to 19333.12
-  ;myStick.SetAxisByIndex(19333.12000, 3)
-  ;myStick.SetAxisByIndex(32000, 3)
-  ;Msgbox 32000
-  ;myStick.SetAxisByIndex(49, 3)
-  ;Msgbox 49
-  ;myStick.SetAxisByIndex(11000, 3)
-  ;Msgbox 11000
-  ;myStick.SetAxisByIndex(20000, 3)
-  ;Msgbox 20000
-  ;myStick.SetAxisByIndex(0.4, 3)
-  ;Msgbox 0.4
-  ;myStick.SetAxisByIndex(0.95, 3)
-  ;Msgbox 0.95
-  ;myStick.SetAxisByIndex(1.3, 3)
-  ;Msgbox 1.3
-  ;myStick.SetAxisByIndex(-10000, 3)
-  ;Msgbox -10000
 }
 
 neither(a, b) {
