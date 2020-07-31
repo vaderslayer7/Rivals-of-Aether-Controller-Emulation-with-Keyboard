@@ -433,6 +433,16 @@ convertCoords(coords) {
 
 setAnalogR(value) {
   global
+  ; vJoy/Dolphin does something strange with rounding analog shoulder presses. In general,
+  ; it seems to want to round to odd values, so
+  ;   16384 => 0.00000 (0)   <-- actual value used for 0
+  ;   19532 => 0.35000 (49)  <-- actual value used for 49
+  ;   22424 => 0.67875 (95)  <-- actual value used for 94
+  ;   22384 => 0.67875 (95)
+  ;   22383 => 0.66429 (93)
+  ; But, *extremely* inconsistently, I have seen the following:
+  ;   22464 => 0.67143 (94)
+  ; Which no sense and I can't reproduce. 
   convertedValue := 16384 * (1 + (value  / 255))
   myStick.SetAxisByIndex(convertedValue, 3)
 }
