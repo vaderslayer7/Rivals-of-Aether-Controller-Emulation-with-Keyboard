@@ -176,22 +176,22 @@ right() {
 
 cUp() {
   global
-  return buttonCUp and mostRecentVerticalC == "U"
+  return buttonCUp and mostRecentVerticalC == "U" and not bothMods()
 }
 
 cDown() {
   global
-  return buttonCDown and mostRecentVerticalC == "D"
+  return buttonCDown and mostRecentVerticalC == "D" and not bothMods()
 }
 
 cLeft() {
   global
-  return buttonCLeft and mostRecentHorizontalC == "L"
+  return buttonCLeft and mostRecentHorizontalC == "L" and not bothMods()
 }
 
 cRight() {
   global
-  return buttonCRight and mostRecentHorizontalC == "R"
+  return buttonCRight and mostRecentHorizontalC == "R" and not bothMods()
 }
 
 modX() {
@@ -220,6 +220,11 @@ anyHoriz() {
 anyMod() {
   global
   return modX() or modY()
+}
+
+bothMods() {
+  global
+  return buttonModX and buttonModY
 }
 
 anyVertC() {
@@ -741,7 +746,7 @@ Label13_UP:
 ; C Up
 Label14:
   buttonCUp := true
-  if (buttonModX and buttonModY) {
+  if (bothMods()) {
     ; Pressing ModX and ModY simultaneously changes C buttons to D pad
     myStick.SetBtn(1, 9)
   } else {
@@ -761,7 +766,7 @@ Label14_UP:
 ; C Down
 Label15:
   buttonCDown := true
-  if (buttonModX and buttonModY) {
+  if (bothMods()) {
     ; Pressing ModX and ModY simultaneously changes C buttons to D pad
     myStick.SetBtn(1, 11)
   } else {
@@ -781,7 +786,7 @@ Label15_UP:
 ; C Left
 Label16:
   buttonCLeft := true
-  if (buttonModX and buttonModY) {
+  if (bothMods()) {
     ; Pressing ModX and ModY simultaneously changes C buttons to D pad
     myStick.SetBtn(1, 10)
   } else {
@@ -801,7 +806,7 @@ Label16_UP:
 ; C Right
 Label17:
   buttonCRight := true
-  if (buttonModX and buttonModY) {
+  if (bothMods()) {
     ; Pressing ModX and ModY simultaneously changes C buttons to D pad
     myStick.SetBtn(1, 12)
   } else {
@@ -887,28 +892,76 @@ Label24_UP:
 
 ; Debug
 Label25:
-  debugFormatString = 
-  (
-    Analog Stick Coordinates: [{1}, {2}] ([{3}, {4}])
-    Direction Buttons: (u/d/l/r/mx/my): {5}/{6}/{7}/{8}/{9}/{10}
-    Action Buttons (A/B/L/R/X/Y/Z): {11}/{12}/{13}/{14}/{15}/{16}/{17}
-    C Stick Coordinates: [{18}, {19}] ([{20}, {21}])
-    C Buttons (Up/Down/Left/Right): {22}/{23}/{24}/{25}
-  )
-  coords := getAnalogCoords()
-  convertedCoords := convertCoords(coords)
-  cStickCoords := getCStickCoords()
-  convertedCStickCoords := convertCoords(cStickCoords)
-  debugString := Format(debugFormatString
-    , coords[1], coords[2]
-    , convertedCoords[1], convertedCoords[2]
-    , buttonUp, buttonDown, buttonLeft, buttonRight, buttonModX, buttonModY
-    , buttonA, buttonB, buttonL, buttonR, buttonX, buttonY, buttonZ
-    , cStickCoords[1], cStickCoords[2]
-    , convertedCStickCoords[1], convertedCStickCoords[2]
-    , buttonCUp, buttonCDown, buttonCLeft, buttonCRight)
+  debugString := getDebug()
   Msgbox % debugString
 
 Label25_UP:
   return
 
+getDebug() {
+  global
+  activeArray := []
+  pressedArray := []
+
+  appendButtonState(activeArray, pressedArray, up(), buttonUp, "Up")
+  appendButtonState(activeArray, pressedArray, down(), buttonDown, "Down")
+  appendButtonState(activeArray, pressedArray, left(), buttonLeft, "Left")
+  appendButtonState(activeArray, pressedArray, right(), buttonRight, "Right")
+
+  appendButtonState(activeArray, pressedArray, buttonModX, modX(), "ModX")
+  appendButtonState(activeArray, pressedArray, buttonModY, modY(), "ModY")
+
+  appendButtonState(activeArray, pressedArray, buttonA, false, "A")
+  appendButtonState(activeArray, pressedArray, buttonB, false, "B")
+  appendButtonState(activeArray, pressedArray, buttonL, false, "L")
+  appendButtonState(activeArray, pressedArray, buttonR, false, "R")
+  appendButtonState(activeArray, pressedArray, buttonX, false, "X")
+  appendButtonState(activeArray, pressedArray, buttonY, false, "Y")
+  appendButtonState(activeArray, pressedArray, buttonZ, false, "Z")
+
+  appendButtonState(activeArray, pressedArray, buttonLS1, false, "LS1")
+  appendButtonState(activeArray, pressedArray, buttonLS2, false, "LS2")
+
+  appendButtonState(activeArray, pressedArray, CUp(), buttonCUp, "C-Up")
+  appendButtonState(activeArray, pressedArray, CDown(), buttonCDown, "C-Down")
+  appendButtonState(activeArray, pressedArray, CLeft(), buttonCLeft, "C-Left")
+  appendButtonState(activeArray, pressedArray, CRight(), buttonCRight, "C-Right")
+
+  activeButtonList := stringJoin(", ", activeArray)
+  pressedButtonList := stringJoin(", ", pressedArray)
+
+  analogCoords := getAnalogCoords()
+  cStickCoords := getCStickCoords()
+
+  debugFormatString = 
+  (
+    Analog Stick: [{1}, {2}]
+    C Stick: [{3}, {4}]
+
+    Active held buttons:
+        {5}
+
+    Disabled held buttons:
+        {6}
+  )
+
+  return Format(debugFormatString
+    , analogCoords[1], analogCoords[2]
+    , cStickCoords[1], cStickCoords[2]
+    , activeButtonList, pressedButtonList)
+}
+
+appendButtonState(activeArray, pressedArray, isActive, isPressed, name) {
+  if (isActive) {
+    activeArray.Push(name)
+  } else if (isPressed) {
+    pressedArray.Push(name)
+  }
+}
+
+; From https://www.autohotkey.com/boards/viewtopic.php?t=7124
+stringJoin(sep, params) {
+    for index,param in params
+        str .= param . sep
+    return SubStr(str, 1, -StrLen(sep))
+}
