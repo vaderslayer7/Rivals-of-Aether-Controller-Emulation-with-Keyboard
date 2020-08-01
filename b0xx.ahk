@@ -935,6 +935,7 @@ getDebug() {
 
   debugFormatString = 
   (
+
     Analog Stick: [{1}, {2}]
     C Stick: [{3}, {4}]
 
@@ -943,6 +944,7 @@ getDebug() {
 
     Disabled held buttons:
         {6}
+
   )
 
   return Format(debugFormatString
