@@ -253,7 +253,9 @@ updateCStick() {
 
 getAnalogCoords() {
   global
-  if (buttonR) {
+  if (anyMod() and (anyVert() and anyHoriz()) and (anyC() or buttonZ) and not (buttonL or buttonR or buttonLSL or buttonLSM)) {
+    coords := getAnalogCoordsFirefox()
+  } else if (buttonR) {
     coords := getAnalogCoordsWithR()
   } else if (buttonL or buttonZ or buttonLSL or buttonLSM) {
     coords := getAnalogCoordsWithLZ()
@@ -300,17 +302,12 @@ getAnalogCoordsWithLZ() {
   if (neither(anyVert(), anyHoriz())) {
     return coordsOrigin
   } else if (anyVert() and anyHoriz()) {
-    if (buttonZ and anyMod() and not buttonL) {
-      ; Z + modifier + quadrant direction is an extended firefox angle (even without C)
-      return modX() ? coordsExtendedFirefoxModX : coordsExtendedFirefoxModY
+    if (modX()) {
+      return coordsLZShieldQuadrantModX
+    } else if (modY()) {
+      return up() ? coordsLZShieldQuadrant12ModY : coordsLZShieldQuadrant34ModY
     } else {
-      if (modX()) {
-        return coordsLZShieldQuadrantModX
-      } else if (modY()) {
-        return up() ? coordsLZShieldQuadrant12ModY : coordsLZShieldQuadrant34ModY
-      } else {
-        return up() ? coordsLZShieldQuadrant12 : coordsLZShieldQuadrant34
-      }
+      return up() ? coordsLZShieldQuadrant12 : coordsLZShieldQuadrant34
     }
   } else if (anyVert()) {
     return coordsLZShieldVertical
@@ -324,16 +321,12 @@ getAnalogCoordsWithNoShield() {
   if (neither(anyVert(), anyHoriz())) {
     return coordsOrigin
   } else if (anyVert() and anyHoriz()) {
-    if (anyC() and anyMod()) {
-      return getAnalogCoordsFirefox()
+    if (modX()) {
+      return coordsQuadrantModX
+    } else if (modY()) {
+      return coordsQuadrantModY
     } else {
-      if (modX()) {
-        return coordsQuadrantModX
-      } else if (modY()) {
-        return coordsQuadrantModY
-      } else {
-        return coordsQuadrant
-      }
+      return coordsQuadrant
     }
   } else if (anyVert()) {
     if (modX()) {
@@ -367,7 +360,7 @@ getAnalogCoordsFirefox() {
       return buttonZ ? coordsExtendedFirefoxModXCRight : coordsFirefoxModXCRight
     }
   } else if (modY()) {
-    if (cUp()) { ; code doesn't allow multiple c button variables to be true at once
+    if (cUp()) {
       return buttonZ ? coordsExtendedFirefoxModYCUp : coordsFirefoxModYCUp
     } else if (cDown()) {
       return buttonZ ? coordsExtendedFirefoxModYCDown : coordsFirefoxModYCDown
