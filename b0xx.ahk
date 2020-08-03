@@ -851,23 +851,23 @@ Label17_UP:
 
 ; Lightshield (Light)
 Label18:
-  buttonLSL = true
+  buttonLSL := true
   setAnalogR(49)
   return
 
 Label18_UP:
-  buttonLSL = false
+  buttonLSL := false
   setAnalogR(0)
   return
 
 ; Lightshield (Medium)
 Label19:
-  buttonLSM = true
+  buttonLSM := true
   setAnalogR(94)
   return
 
 Label19_UP:
-  buttonLSM = false
+  buttonLSM := false
   setAnalogR(0)
   return
 
