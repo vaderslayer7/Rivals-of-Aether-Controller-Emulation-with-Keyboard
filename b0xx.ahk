@@ -152,6 +152,9 @@ coordsExtendedFirefoxModYCLeft := [0.5125, 0.8500]  ; ~59 deg
 coordsExtendedFirefoxModYCDown := [0.4375, 0.8875]  ; ~64 deg
 coordsExtendedFirefoxModY := [0.3625, 0.9250]       ; ~69 deg
 
+; Debug info
+lastCoordTrace := ""
+
 ; Utility functions
 
 up() {
@@ -281,18 +284,24 @@ reflectCoords(coords) {
 getAnalogCoordsWithR() {
   global
   if (neither(anyVert(), anyHoriz())) {
+    lastCoordTrace := "R-O"
     return coordsOrigin
   } else if (anyVert() and anyHoriz()) {
     if (modX()) {
+      lastCoordTrace := "R-Q-X"
       return coordsRShieldQuadrantModX
     } else if (modY()) {
+      lastCoordTrace := "R-Q-Y"
       return up() ? coordsRShieldQuadrant12ModY : coordsRShieldQuadrant34ModY
     } else {
+      lastCoordTrace := "R-Q"
       return coordsRShieldQuadrant
     }
   } else if (anyVert()) {
+    lastCoordTrace := "R-V"
     return coordsRShieldVertical
   } else {
+    lastCoordTrace := "R-H"
     return coordsRShieldHorizontal
   }
 }
@@ -300,18 +309,24 @@ getAnalogCoordsWithR() {
 getAnalogCoordsWithLZ() {
   global
   if (neither(anyVert(), anyHoriz())) {
+    lastCoordTrace := "L-O"
     return coordsOrigin
   } else if (anyVert() and anyHoriz()) {
     if (modX()) {
+      lastCoordTrace := "L-Q-X"
       return coordsLZShieldQuadrantModX
     } else if (modY()) {
+      lastCoordTrace := "L-Q-Y"
       return up() ? coordsLZShieldQuadrant12ModY : coordsLZShieldQuadrant34ModY
     } else {
+      lastCoordTrace := "L-Q"
       return up() ? coordsLZShieldQuadrant12 : coordsLZShieldQuadrant34
     }
   } else if (anyVert()) {
+    lastCoordTrace := "L-V"
     return coordsLZShieldVertical
   } else {
+    lastCoordTrace := "L-H"
     return coordsLZShieldHorizontal
   }
 }
@@ -319,29 +334,39 @@ getAnalogCoordsWithLZ() {
 getAnalogCoordsWithNoShield() {
   global
   if (neither(anyVert(), anyHoriz())) {
+    lastCoordTrace := "N-O"
     return coordsOrigin
   } else if (anyVert() and anyHoriz()) {
     if (modX()) {
+      lastCoordTrace := "N-Q-X"
       return coordsQuadrantModX
     } else if (modY()) {
+      lastCoordTrace := "N-Q-Y"
       return coordsQuadrantModY
     } else {
+      lastCoordTrace := "N-Q"
       return coordsQuadrant
     }
   } else if (anyVert()) {
     if (modX()) {
+      lastCoordTrace := "N-V-X"
       return coordsVerticalModX
     } else if (modY()) {
+      lastCoordTrace := "N-V-Y"
       return coordsVerticalModY
     } else {
+      lastCoordTrace := "N-V"
       return coordsVertical
     }
   } else {
     if (modX()) {
+      lastCoordTrace := "N-H-X"
       return coordsHorizontalModX
     } else if (modY()) {
+      lastCoordTrace := "N-H-Y"
       return buttonB ? coordsHorizontal : coordsHorizontalModY ; turnaround side-b nerf
     } else {
+      lastCoordTrace := "N-H"
       return coordsHorizontal
     }
   }
@@ -351,22 +376,30 @@ getAnalogCoordsFirefox() {
   global
   if (modX()) {
     if (cUp()) {
+      lastCoordTrace := "F-X-U"
       return buttonZ ? coordsExtendedFirefoxModXCUp : coordsFirefoxModXCUp
     } else if (cDown()) {
+      lastCoordTrace := "F-X-D"
       return buttonZ ? coordsExtendedFirefoxModXCDown : coordsFirefoxModXCDown
     } else if (cLeft()) {
+      lastCoordTrace := "F-X-L"
       return buttonZ ? coordsExtendedFirefoxModXCLeft : coordsFirefoxModXCLeft
     } else if (cRight()) {
+      lastCoordTrace := "F-X-R"
       return buttonZ ? coordsExtendedFirefoxModXCRight : coordsFirefoxModXCRight
     }
   } else if (modY()) {
     if (cUp()) {
+      lastCoordTrace := "F-Y-U"
       return buttonZ ? coordsExtendedFirefoxModYCUp : coordsFirefoxModYCUp
     } else if (cDown()) {
+      lastCoordTrace := "F-Y-D"
       return buttonZ ? coordsExtendedFirefoxModYCDown : coordsFirefoxModYCDown
     } else if (cLeft()) {
+      lastCoordTrace := "F-Y-L"
       return buttonZ ? coordsExtendedFirefoxModYCLeft : coordsFirefoxModYCLeft
     } else if (cRight()) {
+      lastCoordTrace := "F-Y-R"
       return buttonZ ? coordsExtendedFirefoxModYCRight : coordsFirefoxModYCRight
     }
   }
@@ -895,14 +928,15 @@ getDebug() {
   global
   activeArray := []
   pressedArray := []
+  flagArray := []
 
   appendButtonState(activeArray, pressedArray, up(), buttonUp, "Up")
   appendButtonState(activeArray, pressedArray, down(), buttonDown, "Down")
   appendButtonState(activeArray, pressedArray, left(), buttonLeft, "Left")
   appendButtonState(activeArray, pressedArray, right(), buttonRight, "Right")
 
-  appendButtonState(activeArray, pressedArray, buttonModX, modX(), "ModX")
-  appendButtonState(activeArray, pressedArray, buttonModY, modY(), "ModY")
+  appendButtonState(activeArray, pressedArray, modX(), buttonModX, "ModX")
+  appendButtonState(activeArray, pressedArray, modY(), buttonModY, "ModY")
 
   appendButtonState(activeArray, pressedArray, buttonA, false, "A")
   appendButtonState(activeArray, pressedArray, buttonB, false, "B")
@@ -912,19 +946,28 @@ getDebug() {
   appendButtonState(activeArray, pressedArray, buttonY, false, "Y")
   appendButtonState(activeArray, pressedArray, buttonZ, false, "Z")
 
-  appendButtonState(activeArray, pressedArray, buttonLS1, false, "LS1")
-  appendButtonState(activeArray, pressedArray, buttonLS2, false, "LS2")
+  appendButtonState(activeArray, pressedArray, buttonLSL, false, "LS1")
+  appendButtonState(activeArray, pressedArray, buttonLSM, false, "LS2")
 
   appendButtonState(activeArray, pressedArray, CUp(), buttonCUp, "C-Up")
   appendButtonState(activeArray, pressedArray, CDown(), buttonCDown, "C-Down")
   appendButtonState(activeArray, pressedArray, CLeft(), buttonCLeft, "C-Left")
   appendButtonState(activeArray, pressedArray, CRight(), buttonCRight, "C-Right")
 
+  conditionalAppend(flagArray, simultaneousHorizontalModifierLockout, "SHML")
+
   activeButtonList := stringJoin(", ", activeArray)
   pressedButtonList := stringJoin(", ", pressedArray)
+  flagList := stringJoin(", ", flagArray)
+
+  trace1 := lastCoordTrace
 
   analogCoords := getAnalogCoords()
   cStickCoords := getCStickCoords()
+
+  trace2 := lastCoordTrace
+
+  trace := trace1 == trace2 ? trace1 : Format("{1}/{2}", trace1, trace2)
 
   debugFormatString = 
   (
@@ -938,12 +981,19 @@ getDebug() {
     Disabled held buttons:
         {6}
 
+    Flags:
+        {7}
+
+    Trace:
+        {8}
+
   )
 
   return Format(debugFormatString
     , analogCoords[1], analogCoords[2]
     , cStickCoords[1], cStickCoords[2]
-    , activeButtonList, pressedButtonList)
+    , activeButtonList, pressedButtonList, flagList
+    , trace)
 }
 
 appendButtonState(activeArray, pressedArray, isActive, isPressed, name) {
@@ -951,6 +1001,12 @@ appendButtonState(activeArray, pressedArray, isActive, isPressed, name) {
     activeArray.Push(name)
   } else if (isPressed) {
     pressedArray.Push(name)
+  }
+}
+
+conditionalAppend(array, condition, value) {
+  if (condition) {
+    array.Push(value)
   }
 }
 
