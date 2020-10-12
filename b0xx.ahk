@@ -417,7 +417,7 @@ getCStickCoords() {
   if (neither(anyVertC(), anyHorizC())) {
     coords := [0, 0]
   } else if (anyVertC() and anyHorizC()) {
-    coords := [0.7, 0.7]
+    coords := [0.525, 0.85]
   } else if (anyVertC()) {
       coords := [0, 1]
   } else {
