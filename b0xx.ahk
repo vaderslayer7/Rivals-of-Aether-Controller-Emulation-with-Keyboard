@@ -377,30 +377,30 @@ getAnalogCoordsFirefox() {
   if (modX()) {
     if (cUp()) {
       lastCoordTrace := "F-X-U"
-      return buttonZ ? coordsExtendedFirefoxModXCUp : coordsFirefoxModXCUp
+      return buttonB ? coordsExtendedFirefoxModXCUp : coordsFirefoxModXCUp
     } else if (cDown()) {
       lastCoordTrace := "F-X-D"
-      return buttonZ ? coordsExtendedFirefoxModXCDown : coordsFirefoxModXCDown
+      return buttonB ? coordsExtendedFirefoxModXCDown : coordsFirefoxModXCDown
     } else if (cLeft()) {
       lastCoordTrace := "F-X-L"
-      return buttonZ ? coordsExtendedFirefoxModXCLeft : coordsFirefoxModXCLeft
+      return buttonB ? coordsExtendedFirefoxModXCLeft : coordsFirefoxModXCLeft
     } else if (cRight()) {
       lastCoordTrace := "F-X-R"
-      return buttonZ ? coordsExtendedFirefoxModXCRight : coordsFirefoxModXCRight
+      return buttonB ? coordsExtendedFirefoxModXCRight : coordsFirefoxModXCRight
     }
   } else if (modY()) {
     if (cUp()) {
       lastCoordTrace := "F-Y-U"
-      return buttonZ ? coordsExtendedFirefoxModYCUp : coordsFirefoxModYCUp
+      return buttonB ? coordsExtendedFirefoxModYCUp : coordsFirefoxModYCUp
     } else if (cDown()) {
       lastCoordTrace := "F-Y-D"
-      return buttonZ ? coordsExtendedFirefoxModYCDown : coordsFirefoxModYCDown
+      return buttonB ? coordsExtendedFirefoxModYCDown : coordsFirefoxModYCDown
     } else if (cLeft()) {
       lastCoordTrace := "F-Y-L"
-      return buttonZ ? coordsExtendedFirefoxModYCLeft : coordsFirefoxModYCLeft
+      return buttonB ? coordsExtendedFirefoxModYCLeft : coordsFirefoxModYCLeft
     } else if (cRight()) {
       lastCoordTrace := "F-Y-R"
-      return buttonZ ? coordsExtendedFirefoxModYCRight : coordsFirefoxModYCRight
+      return buttonB ? coordsExtendedFirefoxModYCRight : coordsFirefoxModYCRight
     }
   }
 }
