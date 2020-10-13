@@ -117,7 +117,15 @@ coordsQuadrant := [0.7, 0.7]
 coordsQuadrantModX := [0.7375, 0.3125]
 coordsQuadrantModY := [0.3125, 0.7375]
 
+coordsAirdodgeVertical := coordsVertical
+coordsAirdodgeVerticalModX := coordsVerticalModX
+coordsAirdodgeVerticalModY := coordsVerticalModY
+coordsAirdodgeHorizontal := coordsHorizontal
+coordsAirdodgeHorizontalModX := coordsHorizontalModX
+coordsAirdodgeHorizontalModY := coordsHorizontalModY
 coordsAirdodgeQuadrant := [0.7, 0.6875]
+coordsAirdodgeQuadrant12 := [0.7, 0.7]
+coordsAirdodgeQuadrant34 := [0.7, 0.6875]
 coordsAirdodgeQuadrantModX := [0.6375, 0.375]
 coordsAirdodgeQuadrant12ModY := [0.475, 0.875]
 coordsAirdodgeQuadrant34ModY := [0.5, 0.85]
@@ -284,7 +292,7 @@ getAnalogCoordsAirdodge() {
   if (neither(anyVert(), anyHoriz())) {
     lastCoordTrace := "L-O"
     return coordsOrigin
-  } else if (anyVert() and anyHoriz()) {
+  } else if (anyQuadrant()) {
     if (modX()) {
       lastCoordTrace := "L-Q-X"
       return coordsAirdodgeQuadrantModX
@@ -296,11 +304,27 @@ getAnalogCoordsAirdodge() {
       return up() ? coordsAirdodgeQuadrant12 : coordsAirdodgeQuadrant34
     }
   } else if (anyVert()) {
-    lastCoordTrace := "L-V"
-    return coordsAirdodgeVertical
+	if (modX()) {
+      lastCoordTrace := "L-V-X"
+      return coordsAirdodgeVerticalModX
+    } else if (modY()) {
+      lastCoordTrace := "L-V-Y"
+      return coordsAirdodgeVerticalModY
+    } else {
+      lastCoordTrace := "L-V"
+      return coordsAirdodgeVertical
+    }
   } else {
-    lastCoordTrace := "L-H"
-    return coordsAirdodgeHorizontal
+    if (modX()) {
+      lastCoordTrace := "L-H-X"
+      return coordsAirdodgeHorizontalModX
+    } else if (modY()) {
+      lastCoordTrace := "L-H-Y"
+      return buttonB ? coordsAirdodgeHorizontal: coordsAirdodgeHorizontalModY ; turnaround side-b nerf
+    } else {
+      lastCoordTrace := "L-H"
+      return coordsAirdodgeHorizontal
+    }
   }
 }
 
@@ -309,7 +333,7 @@ getAnalogCoordsWithNoShield() {
   if (neither(anyVert(), anyHoriz())) {
     lastCoordTrace := "N-O"
     return coordsOrigin
-  } else if (anyVert() and anyHoriz()) {
+  } else if (anyQuadrant()) {
     if (modX()) {
       lastCoordTrace := "N-Q-X"
       return coordsQuadrantModX
