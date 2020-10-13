@@ -258,7 +258,7 @@ getAnalogCoords() {
   global
   if (anyShield()) {
     coords := getAnalogCoordsAirdodge()
-  } else if (anyMod() and anyQuadrant() and anyC()) {
+  } else if (anyMod() and anyQuadrant() and (anyC() or buttonB)) {
     coords := getAnalogCoordsFirefox()
   } else {
     coords := getAnalogCoordsWithNoShield()
@@ -360,6 +360,9 @@ getAnalogCoordsFirefox() {
     } else if (cRight()) {
       lastCoordTrace := "F-X-R"
       return buttonB ? coordsExtendedFirefoxModXCRight : coordsFirefoxModXCRight
+    } else {
+      lastCoordTrace := "F-X"
+      return coordsExtendedFirefoxModX
     }
   } else if (modY()) {
     if (cUp()) {
@@ -374,6 +377,9 @@ getAnalogCoordsFirefox() {
     } else if (cRight()) {
       lastCoordTrace := "F-Y-R"
       return buttonB ? coordsExtendedFirefoxModYCRight : coordsFirefoxModYCRight
+    } else {
+      lastCoordTrace := "F-Y"
+      return coordsExtendedFirefoxModY
     }
   }
 }
@@ -959,7 +965,6 @@ getDebug() {
 
     Trace:
         {8}
-
   )
 
   return Format(debugFormatString
