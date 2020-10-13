@@ -37,6 +37,9 @@ Ctrl-Alt-S pauses and unpauses the Autohotkey script.
 
 # Troubleshooting
 
+For general assistance with installation and setup, check out the B0XX discord (link can be found on [b0xx.com](b0xx.com)). People there are pretty friendly and there's usually
+someone around who can help.
+
 ## Controller behavior is unexpected, or a specific technique doesn't work
 * Use www.keyboardchecker.com to make sure all of the required keyboard inputs can be recorded simultaneously on your keyboard.
 * Make sure any keys like Shift, Control, Tab, etc have their default behavior disabled in the GUI.
@@ -46,7 +49,7 @@ Ctrl-Alt-S pauses and unpauses the Autohotkey script.
 * Hmu (TuberLuber on Discord/Reddit) or file an issue on Github.
 
 ## Holding left and right continuously causes the character to dashdance, or up and down causes the character to repeatedly jump/fastfall
-This is an issue with your keyboard or keyboard driver, Autohotkey will only update controller inputs when a key is first held or released.
+This is most likely an issue with your keyboard or keyboard driver, since Autohotkey only updats controller inputs when a key is first held or released.
 
 ## Holding C-Left and pressing C-Right should cause a rightward smash/aerial, but it doesn't
 This looks like it might be a glitch in melee itself. See: https://imgur.com/a/Tf3eKJQ
