@@ -20,8 +20,8 @@ hotkeys := [ "Analog Up"             ; 1
            , "C-stick Down"          ; 15
            , "C-stick Left"          ; 16
            , "C-stick Right"         ; 17
-           , "Lightshield (Light)"   ; 18
-           , "Lightshield (Medium)"  ; 19
+           , "Light Shield"          ; 18
+           , "Mid Shield"            ; 19
            , "Start"                 ; 20
            , "D-pad Up"              ; 21
            , "D-pad Down"            ; 22
@@ -86,8 +86,8 @@ buttonX := false
 buttonY := false
 buttonZ := false
 
-buttonLSL := false
-buttonLSM := false
+buttonLightShield := false
+buttonMidShield := false
 
 buttonModX := false
 buttonModY := false
@@ -108,49 +108,39 @@ simultaneousHorizontalModifierLockout := false
 ; b0xx constants
 coordsOrigin := [0, 0]
 coordsVertical := [0, 1]
-coordsVerticalModX := [0, 0.2875]
+coordsVerticalModX := [0, 0.5375]
 coordsVerticalModY := [0, 0.7375]
 coordsHorizontal := [1, 0]
 coordsHorizontalModX := [0.6625, 0]
 coordsHorizontalModY := [0.3375, 0]
 coordsQuadrant := [0.7, 0.7]
-coordsQuadrantModX := [0.7375, 0.2875]
-coordsQuadrantModY := [0.2875, 0.7375]
+coordsQuadrantModX := [0.7375, 0.3125]
+coordsQuadrantModY := [0.3125, 0.7375]
 
-coordsRShieldVertical := [0, 0.5375]
-coordsRShieldHorizontal := [0.6375, 0]
-coordsRShieldQuadrant := [0.5375, 0.5375]
-coordsRShieldQuadrantModX := [0.6375, 0.375]
-coordsRShieldQuadrant12ModY := [0.4750, 0.8750]
-coordsRShieldQuadrant34ModY := [0.5, 0.85]
+coordsAirdodgeQuadrant := [0.7, 0.6875]
+coordsAirdodgeQuadrantModX := [0.6375, 0.375]
+coordsAirdodgeQuadrant12ModY := [0.475, 0.875]
+coordsAirdodgeQuadrant34ModY := [0.5, 0.85]
 
-coordsLZShieldVertical := coordsVertical
-coordsLZShieldHorizontal := coordsHorizontal
-coordsLZShieldQuadrant12 := coordsRShieldQuadrant
-coordsLZShieldQuadrant34 := [0.7125, 0.6875]
-coordsLZShieldQuadrantModX := coordsRShieldQuadrantModX
-coordsLZShieldQuadrant12ModY := coordsRShieldQuadrant12ModY
-coordsLZShieldQuadrant34ModY := coordsRShieldQuadrant34ModY
+coordsFirefoxModXCDown := [0.7, 0.3625]     ; ~27 deg
+coordsFirefoxModXCLeft := [0.7875, 0.4875]  ; ~32 deg
+coordsFirefoxModXCUp := [0.7, 0.5125]       ; ~36 deg
+coordsFirefoxModXCRight := [0.6125, 0.525]  ; ~41 deg
+coordsFirefoxModYCRight := [0.6375, 0.7625] ; ~50 deg
+coordsFirefoxModYCUp := [0.5125, 0.7]       ; ~54 deg
+coordsFirefoxModYCLeft := [0.4875, 0.7875]  ; ~58 deg
+coordsFirefoxModYCDown := [0.3625, 0.7]     ; ~63 deg
 
-coordsFirefoxModXCDown := [0.6125, 0.3000]  ; ~26 deg
-coordsFirefoxModXCLeft := [0.6500, 0.3875]  ; ~31 deg
-coordsFirefoxModXCUp := [0.6125, 0.4375]    ; ~36 deg
-coordsFirefoxModXCRight := [0.6375, 0.5375] ; ~40 deg
-coordsFirefoxModYCRight := [0.5875, 0.7125] ; ~50 deg
-coordsFirefoxModYCUp := [0.5625, 0.7875]    ; ~54 deg
-coordsFirefoxModYCLeft := [0.4250, 0.7125]  ; ~59 deg
-coordsFirefoxModYCDown := [0.3500, 0.7125]  ; ~64 deg
-
-coordsExtendedFirefoxModX := [0.9250, 0.3625]       ; ~21 deg
-coordsExtendedFirefoxModXCDown := [0.8875, 0.4375]  ; ~26 deg
-coordsExtendedFirefoxModXCLeft := [0.8500, 0.5125]  ; ~31 deg
-coordsExtendedFirefoxModXCUp := [0.7625, 0.5375]    ; ~36 deg
+coordsExtendedFirefoxModX := [0.9125, 0.3875]       ; ~23 deg
+coordsExtendedFirefoxModXCDown := [0.875, 0.45]     ; ~27 deg
+coordsExtendedFirefoxModXCLeft := [0.85, 0.525]     ; ~32 deg
+coordsExtendedFirefoxModXCUp := [0.7375, 0.5375]    ; ~36 deg
 coordsExtendedFirefoxModXCRight := [0.6375, 0.5375] ; ~40 deg
 coordsExtendedFirefoxModYCRight := [0.5875, 0.7125] ; ~50 deg
-coordsExtendedFirefoxModYCUp := [0.5750, 0.8000]    ; ~54 deg
-coordsExtendedFirefoxModYCLeft := [0.5125, 0.8500]  ; ~59 deg
-coordsExtendedFirefoxModYCDown := [0.4375, 0.8875]  ; ~64 deg
-coordsExtendedFirefoxModY := [0.3625, 0.9250]       ; ~69 deg
+coordsExtendedFirefoxModYCUp := [0.5875, 0.8]       ; ~54 deg
+coordsExtendedFirefoxModYCLeft := [0.525, 0.85]     ; ~58 deg
+coordsExtendedFirefoxModYCDown := [0.45, 0.875]     ; ~63 deg
+coordsExtendedFirefoxModY := [0.3875, 0.9125]       ; ~67 deg
 
 ; Debug info
 lastCoordTrace := ""
@@ -220,6 +210,11 @@ anyHoriz() {
   return left() or right()
 }
 
+anyQuadrant() {
+  global
+  return anyVert() and anyHoriz()
+}
+
 anyMod() {
   global
   return modX() or modY()
@@ -228,6 +223,11 @@ anyMod() {
 bothMods() {
   global
   return buttonModX and buttonModY
+}
+
+anyShield() {
+  global
+  return buttonL or buttonR or buttonLightShield or buttonMidShield
 }
 
 anyVertC() {
@@ -256,12 +256,10 @@ updateCStick() {
 
 getAnalogCoords() {
   global
-  if (anyMod() and (anyVert() and anyHoriz()) and (anyC() or buttonZ) and not (buttonL or buttonR or buttonLSL or buttonLSM)) {
+  if (anyShield()) {
+    coords := getAnalogCoordsAirdodge()
+  } else if (anyMod() and anyQuadrant() and anyC()) {
     coords := getAnalogCoordsFirefox()
-  } else if (buttonR) {
-    coords := getAnalogCoordsWithR()
-  } else if (buttonL or buttonZ or buttonLSL or buttonLSM) {
-    coords := getAnalogCoordsWithLZ()
   } else {
     coords := getAnalogCoordsWithNoShield()
   }
@@ -281,32 +279,7 @@ reflectCoords(coords) {
   return [x, y]
 }
 
-getAnalogCoordsWithR() {
-  global
-  if (neither(anyVert(), anyHoriz())) {
-    lastCoordTrace := "R-O"
-    return coordsOrigin
-  } else if (anyVert() and anyHoriz()) {
-    if (modX()) {
-      lastCoordTrace := "R-Q-X"
-      return coordsRShieldQuadrantModX
-    } else if (modY()) {
-      lastCoordTrace := "R-Q-Y"
-      return up() ? coordsRShieldQuadrant12ModY : coordsRShieldQuadrant34ModY
-    } else {
-      lastCoordTrace := "R-Q"
-      return coordsRShieldQuadrant
-    }
-  } else if (anyVert()) {
-    lastCoordTrace := "R-V"
-    return coordsRShieldVertical
-  } else {
-    lastCoordTrace := "R-H"
-    return coordsRShieldHorizontal
-  }
-}
-
-getAnalogCoordsWithLZ() {
+getAnalogCoordsAirdodge() {
   global
   if (neither(anyVert(), anyHoriz())) {
     lastCoordTrace := "L-O"
@@ -314,20 +287,20 @@ getAnalogCoordsWithLZ() {
   } else if (anyVert() and anyHoriz()) {
     if (modX()) {
       lastCoordTrace := "L-Q-X"
-      return coordsLZShieldQuadrantModX
+      return coordsAirdodgeQuadrantModX
     } else if (modY()) {
       lastCoordTrace := "L-Q-Y"
-      return up() ? coordsLZShieldQuadrant12ModY : coordsLZShieldQuadrant34ModY
+      return up() ? coordsAirdodgeQuadrant12ModY : coordsAirdodgeQuadrant34ModY
     } else {
       lastCoordTrace := "L-Q"
-      return up() ? coordsLZShieldQuadrant12 : coordsLZShieldQuadrant34
+      return up() ? coordsAirdodgeQuadrant12 : coordsAirdodgeQuadrant34
     }
   } else if (anyVert()) {
     lastCoordTrace := "L-V"
-    return coordsLZShieldVertical
+    return coordsAirdodgeVertical
   } else {
     lastCoordTrace := "L-H"
-    return coordsLZShieldHorizontal
+    return coordsAirdodgeHorizontal
   }
 }
 
@@ -851,23 +824,23 @@ Label17_UP:
 
 ; Lightshield (Light)
 Label18:
-  buttonLSL := true
+  buttonLightShield := true
   setAnalogR(49)
   return
 
 Label18_UP:
-  buttonLSL := false
+  buttonLightShield := false
   setAnalogR(0)
   return
 
 ; Lightshield (Medium)
 Label19:
-  buttonLSM := true
+  buttonMidShield := true
   setAnalogR(94)
   return
 
 Label19_UP:
-  buttonLSM := false
+  buttonMidShield := false
   setAnalogR(0)
   return
 
@@ -946,8 +919,8 @@ getDebug() {
   appendButtonState(activeArray, pressedArray, buttonY, false, "Y")
   appendButtonState(activeArray, pressedArray, buttonZ, false, "Z")
 
-  appendButtonState(activeArray, pressedArray, buttonLSL, false, "LS1")
-  appendButtonState(activeArray, pressedArray, buttonLSM, false, "LS2")
+  appendButtonState(activeArray, pressedArray, buttonLightShield, false, "LightShield")
+  appendButtonState(activeArray, pressedArray, buttonMidShield, false, "MidShield")
 
   appendButtonState(activeArray, pressedArray, CUp(), buttonCUp, "C-Up")
   appendButtonState(activeArray, pressedArray, CDown(), buttonCDown, "C-Down")
