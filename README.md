@@ -27,7 +27,41 @@ I am unaffiliated with the creators/producers of the B0XX.
 
 All keybindings are configurable in the GUI. To open it, find the Autohotkey icon in the task bar hidden icons (lil ^ symbol in the system tray lower right -> green H icon) and left click or right click followed by "Edit Controls". Hotkeys can also be edited in hotkeys.ini directly. Changes made in the GUI are immediately saved/reflected in to hotkeys.ini and vice versa.
 
-The default Windows behavior of any keys used can be disabled in the GUI. This is recommended for any metakeys or keys with system functionality (e.g. shift, ctrl, tab, esc). To disable default behavior, check the "Prevent Default Behavior" box in the GUI next to the appropriate hotkey.
+The default Windows behavior of any keys used can be disabled in the GUI. This is recommended for any meta-keys or keys with system functionality (e.g. shift, ctrl, tab, esc). To disable default behavior, check the "Prevent Default Behavior" box in the GUI next to the appropriate hotkey.
+
+## Using Shift, Control, and Alt
+
+The GUI allows you to bind a hotkey to a meta-key combination such as Shift + W. To bind a hotkey to one of the meta-keys by itself, you must edit hotkeys.ini directly and enter either "Shift", "Ctrl", or "Alt" for the value on the appropriate line. To enter a meta-key combination in hotkeys.ini, precede the appropriate value with "+", "^", or "!" for Shift/Ctrl/Alt respectively (e.g., for Shift + W, enter "+w" in hotkeys.ini).
+
+## hotkeys.ini Index
+
+The numbered lines in hotkeys.ini correspond to the following buttons:
+
+1. Analog Up
+2. Analog Down
+3. Analog Left
+4. Analog Right
+5. ModX
+6. ModY
+7. A
+8. B
+9. L
+10. R
+11. X
+12. Y
+13. Z
+14. C-Up
+15. C-Down
+16. C-Left
+17. C-Right
+18. Light Shield
+19. Mid Shield
+20. Start
+21. D-Up
+22. D-Down
+23. D-Left
+24. D-Right
+25. Debug
 
 # Default Controls
 
@@ -39,6 +73,12 @@ Ctrl-Alt-S pauses and unpauses the Autohotkey script.
 
 For general assistance with installation and setup, check out the B0XX discord (link can be found on [b0xx.com](b0xx.com)). People there are pretty friendly and there's usually
 someone around who can help.
+
+## Error: "\<key\>" is not a valid key name
+
+One of the entries in hotkeys.ini is invalid. Find the line referenced in the error message and set it to something valid.
+
+Some people may get this error despite not having made an invalid change to hotkeys.ini, due to the default value of the debug hotkey being the empty string. If there is no key value between the quotes in the error message, open hotkeys and add a value for the debug hotkey (entry #25).
 
 ## Controller behavior is unexpected, or a specific technique doesn't work
 
