@@ -5,6 +5,7 @@ This repository is based off of one used to emulate the Melee B0XX controller, j
 
 # Requirements
 Windows
+
 Keyboard with high N-Key Rollover
 - N-Key Rollover is how many keys you can press at once, which isn't always a set number of keys and is often based on circuits and weird stuff like that
 - Gaming keyboards and mechanical keyboards almost definitely have high or infinite N-Key Rollover
