@@ -1,1 +1,0 @@
-Just turn on the Alt Disable thing or rebind alt, then copy the image, I don't really have time to explain the philosophy now probably will later
